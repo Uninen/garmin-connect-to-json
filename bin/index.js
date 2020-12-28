@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 const fs = require('fs/promises')
 const R = require('rambda')
 const dayjs = require('dayjs')
