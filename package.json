@@ -1,0 +1,34 @@
+{
+  "name": "garmin-connect-to-json",
+  "version": "0.0.1",
+  "description": "Save your Garmin Connect data into a JSON file.",
+  "main": "bin/index.js",
+  "bin": {
+    "garmin-connect-to-json": "./bin/index.js"
+  },
+  "repository": "git@gitlab.com:uninen/garmin-connect-to-json.git",
+  "author": "Ville Säävuori <ville@unessa.net>",
+  "license": "MIT",
+  "dependencies": {
+    "app-root-path": "^3.0.0",
+    "commander": "^6.2.1",
+    "dayjs": "^1.9.8",
+    "dotenv": "^8.2.0",
+    "path": "^0.12.7",
+    "playwright": "^1.7.1",
+    "rambda": "^6.4.0"
+  },
+  "files": [
+    "bin/index.js",
+    "README.md"
+  ],
+  "keywords": [
+    "garmin",
+    "api",
+    "json"
+  ],
+  "bugs": {
+    "url": "https://gitlab.com/uninen/garmin-connect-to-json/-/issues"
+  },
+  "homepage": "https://gitlab.com/uninen/garmin-connect-to-json"
+}
