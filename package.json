@@ -1,7 +1,7 @@
 {
   "name": "garmin-connect-to-json",
   "version": "0.0.1",
-  "description": "Save your Garmin Connect data into a JSON file.",
+  "description": "Save data from your Garmin Connect account into a JSON file.",
   "main": "bin/index.js",
   "bin": {
     "garmin-connect-to-json": "./bin/index.js"
