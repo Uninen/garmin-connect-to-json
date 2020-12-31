@@ -7,7 +7,7 @@ const pkg = require('../package.json')
 const dotenv = require('dotenv')
 const appRoot = require('app-root-path')
 const path = require('path')
-const { chromium } = require('playwright')
+const { chromium } = require('playwright-chromium')
 
 dotenv.config(path.resolve(appRoot.path, '.env'))
 
@@ -43,10 +43,12 @@ function sleep(ms) {
 async function play(year, month) {
   return new Promise(async (resolve, reject) => {
     month = parseInt(month) - 1
-    const browser = await chromium.launch()
+    const browser = await chromium.launch({
+      args: ['--disable-dev-shm-usage'],
+    })
     const context = await browser.newContext({
       userAgent:
-        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:84.0) Gecko/20100101 Firefox/84.0',
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36',
     })
     const page = await context.newPage()
     const url = `https://connect.garmin.com/modern/proxy/calendar-service/year/${year}/month/${month}`

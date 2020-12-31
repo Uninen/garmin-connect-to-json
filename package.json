@@ -1,6 +1,6 @@
 {
   "name": "garmin-connect-to-json",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Save data from your Garmin Connect account into a JSON file.",
   "main": "bin/index.js",
   "bin": {
@@ -15,7 +15,7 @@
     "dayjs": "^1.9.8",
     "dotenv": "^8.2.0",
     "path": "^0.12.7",
-    "playwright": "^1.7.1",
+    "playwright-chromium": "^1.7.1",
     "rambda": "^6.4.0"
   },
   "files": [
