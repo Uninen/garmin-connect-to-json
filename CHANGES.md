@@ -1,5 +1,8 @@
 # Changelog
 
+## v0.0.4 - TBA
+
+- Docs: added notes about running in CI.
 ## v0.0.3 - 2020-12-31
 
 - Fix: install only Chrome binary and start the browser with `--disable-dev-shm-usage` flag (see [Chrome issue 736452](https://bugs.chromium.org/p/chromium/issues/detail?id=736452)).
