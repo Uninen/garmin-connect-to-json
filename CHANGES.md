@@ -2,6 +2,7 @@
 
 ## v0.0.4 - TBA
 
+- Refactor: added TS typings in JS source.
 - Docs: added notes about running in CI.
 ## v0.0.3 - 2020-12-31
 

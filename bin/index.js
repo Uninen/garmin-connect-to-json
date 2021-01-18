@@ -9,7 +9,7 @@ const appRoot = require('app-root-path')
 const path = require('path')
 const { chromium } = require('playwright-chromium')
 
-dotenv.config(path.resolve(appRoot.path, '.env'))
+dotenv.config({ path: path.resolve(appRoot.path, '.env') })
 
 let data = []
 let items = []
@@ -34,15 +34,24 @@ program
   .version(pkg.version)
   .parse(process.argv)
 
+/**
+ * @param {number} ms - milliseconds
+ * @return {Promise}
+ */
 function sleep(ms) {
   return new Promise((resolve) => {
     setTimeout(resolve, ms)
   })
 }
 
-async function play(year, month) {
+/**
+ * @param {string} year
+ * @param {string} month
+ * @return {Promise}
+ */
+async function fetchData(year, month) {
   return new Promise(async (resolve, reject) => {
-    month = parseInt(month) - 1
+    month = `${parseInt(month) - 1}`
     const browser = await chromium.launch({
       args: ['--disable-dev-shm-usage'],
     })
@@ -80,7 +89,7 @@ async function play(year, month) {
       .then(async (response) => {
         // console.log('<<', response.status(), response.url())
         const body = await response.body()
-        content = await JSON.parse(body.toString())
+        const content = await JSON.parse(body.toString())
         await browser.close()
         process.stdout.write(` Done.\n`)
         return resolve(content.calendarItems)
@@ -124,7 +133,7 @@ async function play(year, month) {
   process.stdout.write(`Querying ${searchYear}-${searchMonth}.. `)
 
   try {
-    items = await play(searchYear, searchMonth)
+    items = await fetchData(searchYear, searchMonth)
   } catch (err) {
     console.log('Data fetching failed.')
     process.exit(1)
@@ -148,7 +157,9 @@ async function play(year, month) {
 
     const uniqFn = (x, y) => x.id === y.id
     const sortFn = (x) => x.timestamp
-    data = R.reverse(R.sortBy(sortFn, R.uniqWith(uniqFn, data)))
+    data = /** @type {any[]} */ (R.reverse(
+      R.sortBy(sortFn, R.uniqWith(uniqFn, data))
+    ))
   } else {
     if (DEBUG) {
       console.log(`No items found for ${searchYear}-${searchMonth}.`)
