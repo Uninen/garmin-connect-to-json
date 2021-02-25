@@ -35,3 +35,4 @@ LOCAL_NOTES.md
 *.pyc
 
 garminData.json
+browserdata

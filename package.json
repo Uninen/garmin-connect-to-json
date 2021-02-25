@@ -12,11 +12,11 @@
   "dependencies": {
     "app-root-path": "^3.0.0",
     "commander": "^6.2.1",
-    "dayjs": "^1.9.8",
+    "dayjs": "^1.10.4",
     "dotenv": "^8.2.0",
     "path": "^0.12.7",
-    "playwright-chromium": "^1.7.1",
-    "rambda": "^6.4.0"
+    "playwright-chromium": "^1.9.0",
+    "rambda": "^6.5.3"
   },
   "files": [
     "bin/index.js",
