@@ -17,9 +17,9 @@ let itemsOriginally = 0
 let DEBUG = false
 let LOGIN_DELAY = 1100
 let [searchYear, searchMonth] = dayjs().format('YYYY-M').split('-')
-let browserStoragePath = 'browserStorage.json'
-if (process.env.BROWSER_DATA_DIR) {
-  browserStoragePath = process.env.BROWSER_DATA_DIR
+let browserStoragePath = 'sessionStorage.json'
+if (process.env.SESSION_STORAGE_PATH) {
+  browserStoragePath = process.env.SESSION_STORAGE_PATH
 }
 
 const program = new Command()
@@ -35,9 +35,11 @@ program
   )
   .option('--fail-when-zero', 'return exit status 1 if no new items are found')
   .option('-d, --debug', 'debug (verbose) mode')
-  .option('-r, --reauthenticate', 're-saves login cookies')
+  .option('-a, --authenticate', 'forces authentication')
   .version(pkg.version)
   .parse(process.argv)
+
+let forceAuth = !!program.authenticate
 
 /**
  * @param {number} ms - milliseconds
@@ -64,117 +66,128 @@ async function fetchData(year, month) {
       headless: true,
     })
 
-    try {
-      const storageData = await fs.readFile(browserStoragePath, {
-        encoding: 'utf8',
-      })
-      const browserState = JSON.parse(storageData)
-      context = await browser.newContext({
-        browserState,
-      })
-      console.log(`✓ Using existing authentication.`)
-    } catch (err) {
+    if (!forceAuth) {
+      try {
+        const storageData = await fs.readFile(browserStoragePath, {
+          encoding: 'utf8',
+        })
+        const storageState = JSON.parse(storageData)
+        if (DEBUG) {
+          console.log('session storage found: ', storageState)
+        }
+        context = await browser.newContext({
+          storageState,
+        })
+        console.log(`✓ Using existing browser session.`)
+      } catch (err) {
+        console.log(`✓ Existing browser session not found.`)
+        forceAuth = true
+      }
+    }
+
+    if (forceAuth || !context) {
       context = await browser.newContext({
         userAgent:
-          'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36',
+          'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.192 Safari/537.36',
+        viewport: { width: 2880, height: 1800 },
       })
-      console.log(`✓ Using fresh browser context, will authenticate.`)
     }
 
     const page = await context.newPage()
     page.setExtraHTTPHeaders({
       'X-app-ver': '4.39.2.0',
       'NK': 'NT',
+      'accept-language': 'en-GB,en-US;q=0.9,en;q=0.8',
     })
 
     const url = `https://connect.garmin.com/modern/proxy/calendar-service/year/${year}/month/${month}`
-
-    // try {
-    //   await page.goto('https://connect.garmin.com/signin/')
-    //   await page.waitForSelector('iframe')
-
-    //   await page.click('#truste-consent-button')
-    //   await sleep(5000)
-
-    //   await page.frames()[1].check('#login-remember-checkbox')
-
-    //   await page
-    //     .frames()[1]
-    //     .fill('input[name="username"]', process.env.GARMIN_CONNECT_USERNAME)
-    //   await page
-    //     .frames()[1]
-    //     .fill('input[name="password"]', process.env.GARMIN_CONNECT_PASSWORD)
-    //   await page.frames()[1].click('#login-btn-signin')
-    //   await page.waitForSelector('.user-profile')
-    //   await sleep(LOGIN_DELAY)
-
-    //   // await page.click('#truste-show-consent')
-    //   // // Agree and Proceed
-    //   // await sleep(10000)
-    //   // await page.click('text=Agree and Proceed')
-    //   await sleep(30000)
-
-    //   const storage = await context.storageState()
-    //   const storageJson = JSON.stringify(storage)
-    //   console.log('storage: ', storageJson)
-    //   await fs.writeFile(storagePath, storageJson)
-    //   console.log('storage written')
-
-    //   await browser.close()
-
-    //   // await page.goto('https://connect.garmin.com/modern/calendar')
-    //   if (DEBUG) {
-    //     await page.screenshot({ path: `debug-01-after-login.png` })
-    //   }
-    // } catch (err) {
-    //   if (DEBUG) {
-    //     console.log(err)
-    //   }
-    //   return reject(err)
-    // }
-
     if (DEBUG) {
-      console.log('getting URL: ', url)
+      console.log('fetchData URL: ', url)
     }
 
-    // const response = page.waitForEvent('response', async (response) => {
-    //   if (response.url() === url) {
-    //     console.log('hit!')
+    if (forceAuth) {
+      try {
+        await page.goto('https://connect.garmin.com/signin')
+        await page.waitForSelector('iframe')
+        await sleep(LOGIN_DELAY)
 
-    //     const body = await response.body()
-    //     const bodyString = await body.toString()
-    //     if (DEBUG) {
-    //       console.log('raw data: ', bodyString)
-    //     }
+        try {
+          await page.waitForSelector('#truste-consent-button')
+          await page.click('#truste-consent-button')
+          console.log('#truste-consent-button clicked')
+        } catch {
+          console.log('#truste-consent-button never came')
+        }
 
-    //     const content = await JSON.parse(bodyString)
-    //     process.stdout.write(` Done.\n`)
-    //     // return resolve(content.calendarItems)
+        if (DEBUG) {
+          await sleep(LOGIN_DELAY)
+          await page.screenshot({
+            path: `debug-00-unfilled-login.png`,
+            fullPage: true,
+          })
+        }
 
-    //     return content
-    //   } else {
-    //     return false
-    //   }
-    // })
+        await page.frames()[1].check('#login-remember-checkbox')
+        await page
+          .frames()[1]
+          .fill('input[name="username"]', process.env.GARMIN_CONNECT_USERNAME)
+        await page
+          .frames()[1]
+          .fill('input[name="password"]', process.env.GARMIN_CONNECT_PASSWORD)
+
+        if (DEBUG) {
+          await sleep(LOGIN_DELAY)
+          await page.screenshot({
+            path: `debug-01-filled-login.png`,
+            fullPage: true,
+          })
+        }
+
+        await page.frames()[1].click('#login-btn-signin')
+        await page.waitForSelector('.user-profile')
+        await sleep(LOGIN_DELAY * 2)
+        if (DEBUG) {
+          await page.screenshot({
+            path: `debug-02-after-login.png`,
+            fullPage: true,
+          })
+        }
+
+        await page.goto('https://connect.garmin.com/modern/calendar')
+
+        const storage = await context.storageState()
+        const storageJson = JSON.stringify(storage, null, 2)
+        if (DEBUG) {
+          console.log('session storage: ', storageJson)
+        }
+        await fs.writeFile(browserStoragePath, storageJson)
+        console.log(
+          `✓ Browser session created and saved to ${browserStoragePath}`
+        )
+      } catch (err) {
+        if (DEBUG) {
+          console.log(err)
+        }
+        return reject(err)
+      }
+    }
 
     await page.goto('https://connect.garmin.com/modern/calendar')
+    await sleep(LOGIN_DELAY * 2)
     if (DEBUG) {
-      await page.screenshot({ path: `debug-02-calendar-home.png` })
+      await page.screenshot({
+        path: `debug-03-calendar-home.png`,
+        fullPage: true,
+      })
     }
-    // await page.pause()
-    // await response
-    // await browser.close()
-
-    // return response
 
     page
       .goto(url)
       .then(async (response) => {
-        // console.log('<<', response.status(), response.url())
         const body = await response.body()
         const bodyString = await body.toString()
         if (DEBUG) {
-          console.log('raw data: ', bodyString)
+          console.log('Raw data: ', bodyString)
         }
 
         const content = await JSON.parse(bodyString)

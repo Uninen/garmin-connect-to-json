@@ -35,4 +35,5 @@ LOCAL_NOTES.md
 *.pyc
 
 garminData.json
-browserdata
+sessionStorage.json
+*.png
