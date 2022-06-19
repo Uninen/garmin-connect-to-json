@@ -13,7 +13,8 @@
     "clean": "rm -rf build",
     "build": "rollup -c",
     "dev": "tsx src/index.ts --debug",
-    "test": "vitest"
+    "test": "vitest",
+    "test:ci": "vitest"
   },
   "dependencies": {
     "app-root-path": "^3.0.0",
