@@ -1,8 +1,9 @@
-import { chromium } from 'playwright-chromium'
-import { fetchDataConfig, GarminCommandOptions, GarminDataItem } from './types'
-
+import dayjs from 'dayjs'
 import { readFile, writeFile } from 'fs/promises'
-import { GARMIN_APP_VERSION, LOGIN_DELAY_MS, USER_AGENT } from './config'
+import { chromium } from 'playwright-chromium'
+import { reverse, sortBy, uniqWith } from 'rambda'
+import { DEBUG, GARMIN_APP_VERSION, LOGIN_DELAY_MS, USER_AGENT } from './config'
+import { fetchDataConfig, GarminCommandOptions, GarminDataItem } from './types'
 
 export function sleep(ms: number) {
   return new Promise<void>((resolve) => {
@@ -26,8 +27,8 @@ export async function fetchData(year: string, month: string, config: fetchDataCo
           encoding: 'utf8',
         })
         const storageState = JSON.parse(storageData)
-        if (config.debug) {
-          console.log('session storage found: ', storageState)
+        if (DEBUG) {
+          console.log('debug: session storage found: ', storageState)
         }
         context = await browser.newContext({
           storageState,
@@ -54,8 +55,8 @@ export async function fetchData(year: string, month: string, config: fetchDataCo
     })
 
     const url = `https://connect.garmin.com/modern/proxy/calendar-service/year/${year}/month/${month}`
-    if (config.debug) {
-      console.log('fetchData URL: ', url)
+    if (DEBUG) {
+      console.log('debug: fetchData URL: ', url)
     }
 
     if (config.forceAuth) {
@@ -72,7 +73,7 @@ export async function fetchData(year: string, month: string, config: fetchDataCo
           console.log('#truste-consent-button never came')
         }
 
-        if (config.debug) {
+        if (DEBUG) {
           await sleep(LOGIN_DELAY_MS)
           await page.screenshot({
             path: `debug-00-unfilled-login.png`,
@@ -84,7 +85,7 @@ export async function fetchData(year: string, month: string, config: fetchDataCo
         await page.frames()[1].fill('input[name="username"]', process.env.GARMIN_CONNECT_USERNAME!)
         await page.frames()[1].fill('input[name="password"]', process.env.GARMIN_CONNECT_PASSWORD!)
 
-        if (config.debug) {
+        if (DEBUG) {
           await sleep(LOGIN_DELAY_MS)
           await page.screenshot({
             path: `debug-01-filled-login.png`,
@@ -95,7 +96,7 @@ export async function fetchData(year: string, month: string, config: fetchDataCo
         await page.frames()[1].click('#login-btn-signin')
         await page.waitForSelector('.user-profile')
         await sleep(LOGIN_DELAY_MS * 2)
-        if (config.debug) {
+        if (DEBUG) {
           await page.screenshot({
             path: `debug-02-after-login.png`,
             fullPage: true,
@@ -106,13 +107,13 @@ export async function fetchData(year: string, month: string, config: fetchDataCo
 
         const storage = await context.storageState()
         const storageJson = JSON.stringify(storage, null, 2)
-        if (config.debug) {
-          console.log('session storage: ', storageJson)
+        if (DEBUG) {
+          console.log('debug: session storage: ', storageJson)
         }
         await writeFile(config.browserStoragePath, storageJson)
         console.log(`✓ Browser session created and saved to ${config.browserStoragePath}`)
       } catch (err) {
-        if (config.debug) {
+        if (DEBUG) {
           console.log(err)
         }
         return reject(err)
@@ -121,7 +122,7 @@ export async function fetchData(year: string, month: string, config: fetchDataCo
 
     await page.goto('https://connect.garmin.com/modern/calendar')
     await sleep(LOGIN_DELAY_MS * 2)
-    if (config.debug) {
+    if (DEBUG) {
       await page.screenshot({
         path: `debug-03-calendar-home.png`,
         fullPage: true,
@@ -136,8 +137,8 @@ export async function fetchData(year: string, month: string, config: fetchDataCo
         }
         const body = await response.body()
         const bodyString = body.toString()
-        if (config.debug) {
-          console.log('Raw data: ', bodyString)
+        if (DEBUG) {
+          console.log('debug: raw data: ', bodyString)
         }
 
         const content = await JSON.parse(bodyString)
@@ -154,15 +155,35 @@ export async function fetchData(year: string, month: string, config: fetchDataCo
 
 export async function readExistingFile(options: GarminCommandOptions) {
   let existingActivitiesCount = 0
-  let existingData: GarminDataItem[] = []
+  let existingActivities: GarminDataItem[] = []
 
   try {
     const contents = await readFile(options.outputFile, { encoding: 'utf8' })
-    existingData = JSON.parse(contents) as GarminDataItem[]
-    existingActivitiesCount = existingData.length
+    existingActivities = JSON.parse(contents) as GarminDataItem[]
+    existingActivitiesCount = existingActivities.length
     console.log(`✓ Found existing file with ${existingActivitiesCount} items.`)
   } catch (err) {
     console.log('No existing file found.')
   }
-  return { existingActivitiesCount, existingData }
+  return { existingActivitiesCount, existingActivities }
+}
+
+export function sortAndFilterActivities(activities: GarminDataItem[]) {
+  const sortedActivities: GarminDataItem[] = []
+
+  for (const obj of activities) {
+    const timestamp = dayjs(obj.startTimestampLocal).unix()
+    if (timestamp) {
+      sortedActivities.push({ ...obj, timestamp: timestamp })
+    } else {
+      if (DEBUG) {
+        console.log('debug: obj.id: ', obj.id)
+        console.log('debug: obj.date: ', obj.date)
+      }
+    }
+  }
+
+  const uniqFn = (x: GarminDataItem, y: GarminDataItem) => x.id === y.id
+  const sortFn = (x: GarminDataItem) => x.timestamp
+  return reverse(sortBy(sortFn, uniqWith(uniqFn, sortedActivities)))
 }

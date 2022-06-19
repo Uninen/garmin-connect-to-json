@@ -1,17 +1,15 @@
 import { Command } from 'commander'
 import dayjs from 'dayjs'
 import dotenv from 'dotenv'
-import fs from 'fs/promises'
-import { reverse, sortBy, uniqWith } from 'rambda'
+import { writeFile } from 'fs/promises'
 import { version } from '../package.json'
-import { fetchData, readExistingFile } from './functions'
+import { DEBUG } from './config'
+import { fetchData, readExistingFile, sortAndFilterActivities } from './functions'
 
-import type { GarminCommandOptions, GarminDataItem } from './types'
+import type { GarminCommandOptions } from './types'
 
 dotenv.config()
 
-let items: GarminDataItem[] = []
-let DEBUG = false
 let [searchYear, searchMonth] = dayjs().format('YYYY-M').split('-')
 let browserStoragePath = 'sessionStorage.json'
 if (process.env.SESSION_STORAGE_PATH) {
@@ -23,7 +21,6 @@ program
   .option('-o, --output-file <filepath>', 'specify where to output the tweets', './garminData.json')
   .option('-m, --month <YYYY-MM>', 'the month to fetch in YYYY-MM format (default: current month)')
   .option('--fail-when-zero', 'return exit status 1 if no new items are found')
-  .option('-d, --debug', 'debug (verbose) mode')
   .option('-a, --authenticate', 'forces authentication')
   .helpOption('-h --help', 'display this help message')
   .version(version)
@@ -43,8 +40,6 @@ const forceAuth = !!progOptions.authenticate
     process.exit(1)
   }
 
-  DEBUG = !!progOptions.debug
-
   if (DEBUG) {
     console.log('DEBUG mode enabled.')
   }
@@ -53,59 +48,44 @@ const forceAuth = !!progOptions.authenticate
     ;[searchYear, searchMonth] = progOptions.month.split('-')
   }
 
-  const { existingActivitiesCount, existingData } = await readExistingFile(progOptions)
-  let data = existingData
+  const { existingActivitiesCount, existingActivities } = await readExistingFile(progOptions)
 
   process.stdout.write(`Querying ${searchYear}-${searchMonth}.. `)
   try {
-    items = await fetchData(searchYear, searchMonth, {
-      debug: DEBUG,
+    const newActivities = await fetchData(searchYear, searchMonth, {
       forceAuth,
       browserStoragePath,
     })
+
+    if (newActivities.length > 0) {
+      if (DEBUG) {
+        console.log(`debug: found ${newActivities.length} items`)
+      }
+      const allActivities = [...existingActivities, ...newActivities]
+      const data = sortAndFilterActivities(allActivities)
+
+      if (data.length > existingActivitiesCount) {
+        await writeFile(progOptions.outputFile, JSON.stringify(data, null, 2))
+        console.log(`Saved ${data.length} items.`)
+        process.exit(0)
+      } else {
+        console.log(`No new items found.`)
+        if (progOptions.failWhenZero) {
+          process.exit(1)
+        } else {
+          process.exit(0)
+        }
+      }
+    } else {
+      if (DEBUG) {
+        console.log(`debug: no items found for ${searchYear}-${searchMonth}.`)
+      }
+      if (progOptions.failWhenZero) {
+        process.exit(1)
+      }
+    }
   } catch (err) {
     console.log('Data fetching failed.')
     process.exit(1)
-  }
-
-  if (items && items.length > 0) {
-    if (DEBUG) {
-      console.log(`found ${items.length} items`)
-    }
-    for (const obj of items) {
-      const timestamp = dayjs(obj.startTimestampLocal).unix()
-      if (timestamp) {
-        data.push({ ...obj, timestamp: timestamp })
-      } else {
-        if (DEBUG) {
-          console.log('obj.id: ', obj.id)
-          console.log('obj.date: ', obj.date)
-        }
-      }
-    }
-
-    const uniqFn = (x: GarminDataItem, y: GarminDataItem) => x.id === y.id
-    const sortFn = (x: GarminDataItem) => x.timestamp
-    data = reverse(sortBy(sortFn, uniqWith(uniqFn, data)))
-  } else {
-    if (DEBUG) {
-      console.log(`No items found for ${searchYear}-${searchMonth}.`)
-    }
-    if (progOptions.failWhenZero) {
-      process.exit(1)
-    }
-  }
-
-  if (data.length > existingActivitiesCount) {
-    await fs.writeFile(progOptions.outputFile, JSON.stringify(data, null, 2))
-    console.log(`Saved ${data.length} items.`)
-    process.exit(0)
-  } else {
-    console.log(`No new items found.`)
-    if (progOptions.failWhenZero) {
-      process.exit(1)
-    } else {
-      process.exit(0)
-    }
   }
 })()

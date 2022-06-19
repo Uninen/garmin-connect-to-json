@@ -81,7 +81,6 @@ export interface GarminDataItem {
 }
 
 export interface fetchDataConfig {
-  debug: boolean
   forceAuth: boolean
   browserStoragePath: string
 }
