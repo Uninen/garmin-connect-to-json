@@ -4,7 +4,7 @@ import dotenv from 'dotenv'
 import { writeFile } from 'fs/promises'
 import { version } from '../package.json'
 import { DEBUG } from './config'
-import { fetchData, readExistingFile, sortAndFilterActivities } from './functions'
+import { fetchData, getExistingData, processActivities } from './functions'
 
 import type { GarminCommandOptions } from './types'
 
@@ -45,7 +45,7 @@ const forceAuth = !!progOptions.authenticate
     ;[searchYear, searchMonth] = progOptions.month.split('-')
   }
 
-  const { existingActivitiesCount, existingActivities } = await readExistingFile(progOptions)
+  const { existingActivitiesCount, existingActivities } = await getExistingData(progOptions)
 
   process.stdout.write(`Querying ${searchYear}-${searchMonth}.. `)
   try {
@@ -57,8 +57,7 @@ const forceAuth = !!progOptions.authenticate
       if (DEBUG) {
         console.log(`debug: found ${newActivities.length} items`)
       }
-      const allActivities = [...existingActivities, ...newActivities]
-      const data = sortAndFilterActivities(allActivities)
+      const data = processActivities([...existingActivities, ...newActivities])
 
       if (data.length > existingActivitiesCount) {
         await writeFile(progOptions.outputFile, JSON.stringify(data, null, 2))

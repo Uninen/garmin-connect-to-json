@@ -159,7 +159,7 @@ export async function fetchData(year: string, month: string, config: fetchDataCo
   })
 }
 
-export async function readExistingFile(options: GarminCommandOptions) {
+export async function getExistingData(options: GarminCommandOptions) {
   let existingActivitiesCount = 0
   let existingActivities: GarminDataItem[] = []
 
@@ -174,7 +174,7 @@ export async function readExistingFile(options: GarminCommandOptions) {
   return { existingActivitiesCount, existingActivities }
 }
 
-export function sortAndFilterActivities(activities: GarminDataItem[]) {
+export function processActivities(activities: GarminDataItem[]) {
   const sortedActivities: GarminDataItem[] = []
 
   for (const obj of activities) {
