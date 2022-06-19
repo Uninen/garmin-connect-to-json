@@ -11,11 +11,11 @@ import type { GarminCommandOptions, GarminDataItem } from './types'
 dotenv.config()
 
 const GARMIN_APP_VERSION = '4.55.3.1'
+const LOGIN_DELAY = 1100
 let data: GarminDataItem[] = []
 let items: GarminDataItem[] = []
 let itemsOriginally = 0
 let DEBUG = false
-let LOGIN_DELAY = 1100
 let [searchYear, searchMonth] = dayjs().format('YYYY-M').split('-')
 let browserStoragePath = 'sessionStorage.json'
 if (process.env.SESSION_STORAGE_PATH) {

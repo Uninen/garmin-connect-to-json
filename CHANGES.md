@@ -4,6 +4,8 @@
 
 - Refactor: converted project to TypeScript.
 - Tooling: Use Rollup for building.
+- Tooling: Added ESlint.
+- Tooling: Added Renovate bot for keeping up with deps.
 
 ## v0.0.5 - 2022-06-19
 
