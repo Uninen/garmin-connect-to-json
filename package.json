@@ -25,6 +25,7 @@
   },
   "files": [
     "bin/index.js",
+    "LICENSE",
     "README.md"
   ],
   "keywords": [

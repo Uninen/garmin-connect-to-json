@@ -1,20 +1,14 @@
 # Garmin Connect To JSON
 
-Save data from your Garmin Connect account into a JSON file. You can run it programatically (for example with GitLab or GitHub CI) to automatically back up your data into a JSON archive.
+Save data from your Garmin Connect account into a JSON file. Can be run programatically (for example with GitHub or GitLab CI) to automatically back up your data into a JSON archive.
 
-Note: Garmin doesn't offer a public API to normal users so this script scrapes the data from the Web page using your username and password. Your logins are rate limited so triggering this script too often will result in a temporary block for your IP.
-
-## Configuration
-
-1. Add your Garmin Connect username and password to `GARMIN_CONNECT_USERNAME` and `GARMIN_CONNECT_PASSWORD` environment variables (or into `.env` file in the root of your project).
-
-Note: If you plan to use this script inside a CI pipeline, consider setting `PLAYWRIGHT_BROWSERS_PATH=0` environment variable which forces the installation of the required browser inside `node_modules` which allows the binary to be cached as well. (See my [notes about running in GitLab CI](https://til.unessa.net/gitlab/playwright-gitlab-ci/) for more.)
+**Note**: as Garmin doesn't offer a public API to normal users this script scrapes the data from Garmin Connect using your credentials. Your logins are rate limited so triggering this script too often will result in a temporary block for your IP.
 
 ## Usage
 
-When you run `garmin-connect-to-json` first time, a `garminData.json` file (can be overrided) is created in the same directory and your most recent data is saved into it. Subsequent invocations will check the file, and add any new items that aren't already in it. The items are saved in order, latest first.
+First add your Garmin Connect username and password to `GARMIN_CONNECT_USERNAME` and `GARMIN_CONNECT_PASSWORD` environment variables (or into `.env` file in the root of your project).
 
-If you run this from CI, you might find `--fail-when-zero` flag handy as it returns error code 1 when there are no items.
+When you run `garmin-connect-to-json` first time, `garminData.json` file is created in the same directory and your most recent data is saved into it. Subsequent invocations will check the file, and add any new items that aren't already in it. The items are saved in reverse chronological order.
 
 ```
 Usage: garmin-connect-to-json [options]
@@ -27,6 +21,16 @@ Options:
   -V, --version                 output the version number
   -h, --help                    display help for command
 ```
+
+### Running in CI
+
+When running this from CI, you might find `--fail-when-zero` flag handy as it returns error code 1 when there are no items.
+
+Setting `PLAYWRIGHT_BROWSERS_PATH=0` environment variable forces the installation of the required browser inside `node_modules` which allows the binary to be cached as well. (See my [notes about running PlayWright in GitLab CI](https://til.unessa.net/gitlab/playwright-gitlab-ci/) for more.)
+
+## About Data Formats
+
+This script collects a specific format of your activity data (described in [`src/types.ts`](./src/types.ts)) which is provided to the calendar view on Garmin Connect. Most activities have more data available and those can be queried individually from other API endpoints. PRs are welcome for adding these.
 
 ## Contributing
 
