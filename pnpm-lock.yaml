@@ -9,6 +9,7 @@ specifiers:
   path: ^0.12.7
   playwright-chromium: ^1.22.2
   rambda: ^7.1.4
+  typescript: ^4.7.4
 
 dependencies:
   app-root-path: 3.0.0
@@ -21,6 +22,7 @@ dependencies:
 
 devDependencies:
   '@types/node': 18.0.0
+  typescript: 4.7.4
 
 packages:
 
@@ -81,6 +83,12 @@ packages:
   /rambda/7.1.4:
     resolution: {integrity: sha512-bPK8sSiVHIC7CqdWga8R+hRi5hfc4hK6S01lZW4KrLwSNryQoKaCOJA9GNiF20J7Nbe1vejRfR37/ASQXFL5EA==}
     dev: false
+
+  /typescript/4.7.4:
+    resolution: {integrity: sha512-C0WQT0gezHuw6AdY1M2jxUO83Rjf0HP7Sk1DtXj6j1EwkQNZrHAg2XPWlq62oqEhYvONq5pkC2Y9oPljWToLmQ==}
+    engines: {node: '>=4.2.0'}
+    hasBin: true
+    dev: true
 
   /util/0.10.4:
     resolution: {integrity: sha512-0Pm9hTQ3se5ll1XihRic3FDIku70C+iHUdT/W926rSgHV5QgXsYbKZN8MSC3tJtSkhuROzvsQjAaFENRXr+19A==}
