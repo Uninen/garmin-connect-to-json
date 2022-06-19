@@ -1,4 +1,4 @@
-import { Command } from 'commander'
+import { createCommand } from 'commander'
 import dayjs from 'dayjs'
 import dotenv from 'dotenv'
 import fs from 'fs/promises'
@@ -7,7 +7,7 @@ import { chromium } from 'playwright-chromium'
 import R from 'rambda'
 import pkg from '../package.json'
 
-import { GarminDataItem } from './types'
+import { GarminCommand, GarminDataItem } from './types'
 
 dotenv.config({ path: path.resolve('../.env') })
 
@@ -23,7 +23,7 @@ if (process.env.SESSION_STORAGE_PATH) {
   browserStoragePath = process.env.SESSION_STORAGE_PATH
 }
 
-const program = new Command()
+const program = createCommand() as GarminCommand
 program
   .option('-o, --output-file <filepath>', 'specify where to output the tweets', './garminData.json')
   .option('-m, --month <YYYY-MM>', 'the month to fetch in YYYY-MM format (default: current month)')

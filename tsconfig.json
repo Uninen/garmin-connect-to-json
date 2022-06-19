@@ -1,16 +1,15 @@
 {
   "compilerOptions": {
-    "target": "esnext",
-    "module": "esnext",
+    "target": "es2020",
+    "module": "node16",
     "moduleResolution": "node",
     "strict": true,
     "sourceMap": false,
     "resolveJsonModule": true,
-    "isolatedModules": true,
-    "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
-    "lib": ["esnext"],
+    "esModuleInterop": true,
     "skipLibCheck": true,
+    "lib": ["ES2021"],
     "types": ["node"]
   },
   "include": ["src/**/*.ts", "tests/**/*.spec.ts", "tests/**/*.test.ts", "src/**/*.d.ts"],

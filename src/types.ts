@@ -1,3 +1,13 @@
+import { Command } from 'commander'
+
+export interface GarminCommand extends Command {
+  authenticate?: boolean
+  debug?: boolean
+  outputFile: string
+  month?: string
+  failWhenZero?: boolean
+}
+
 export interface GarminDataItem {
   id: number
   groupId: null | string
