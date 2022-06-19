@@ -1,17 +1,19 @@
-const fs = require('fs/promises')
-const R = require('rambda')
-const dayjs = require('dayjs')
-const { Command } = require('commander')
-const pkg = require('../package.json')
-const dotenv = require('dotenv')
-const appRoot = require('app-root-path')
-const path = require('path')
-const { chromium } = require('playwright-chromium')
+import { Command } from 'commander'
+import dayjs from 'dayjs'
+import dotenv from 'dotenv'
+import fs from 'fs/promises'
+import path from 'path'
+import { chromium } from 'playwright-chromium'
+import R from 'rambda'
+import pkg from '../package.json'
 
-dotenv.config({ path: path.resolve(appRoot.path, '.env') })
+import { GarminDataItem } from './types'
 
-let data = []
-let items = []
+dotenv.config({ path: path.resolve('../.env') })
+
+const GARMIN_APP_VERSION = '4.55.3.1'
+let data: GarminDataItem[] = []
+let items: GarminDataItem[] = []
 let itemsOriginally = 0
 let DEBUG = false
 let LOGIN_DELAY = 1100
@@ -33,23 +35,14 @@ program
 
 let forceAuth = !!program.authenticate
 
-/**
- * @param {number} ms - milliseconds
- * @return {Promise}
- */
-function sleep(ms) {
-  return new Promise((resolve) => {
+function sleep(ms: number) {
+  return new Promise<void>((resolve) => {
     setTimeout(resolve, ms)
   })
 }
 
-/**
- * @param {string} year
- * @param {string} month
- * @return {Promise}
- */
-async function fetchData(year, month) {
-  return new Promise(async (resolve, reject) => {
+async function fetchData(year: string, month: string) {
+  return new Promise<GarminDataItem[]>(async (resolve, reject) => {
     month = `${parseInt(month) - 1}`
     let context = null
 
@@ -80,14 +73,14 @@ async function fetchData(year, month) {
     if (forceAuth || !context) {
       context = await browser.newContext({
         userAgent:
-          'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.192 Safari/537.36',
-        viewport: { width: 2880, height: 1800 },
+          'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/102.0.0.0 Safari/537.36',
+        viewport: { width: 1280, height: 1024 },
       })
     }
 
     const page = await context.newPage()
     page.setExtraHTTPHeaders({
-      'X-app-ver': '4.39.2.0',
+      'X-app-ver': GARMIN_APP_VERSION,
       'NK': 'NT',
       'accept-language': 'en-GB,en-US;q=0.9,en;q=0.8',
     })
@@ -120,8 +113,8 @@ async function fetchData(year, month) {
         }
 
         await page.frames()[1].check('#login-remember-checkbox')
-        await page.frames()[1].fill('input[name="username"]', process.env.GARMIN_CONNECT_USERNAME)
-        await page.frames()[1].fill('input[name="password"]', process.env.GARMIN_CONNECT_PASSWORD)
+        await page.frames()[1].fill('input[name="username"]', process.env.GARMIN_CONNECT_USERNAME!)
+        await page.frames()[1].fill('input[name="password"]', process.env.GARMIN_CONNECT_PASSWORD!)
 
         if (DEBUG) {
           await sleep(LOGIN_DELAY)
@@ -170,8 +163,11 @@ async function fetchData(year, month) {
     page
       .goto(url)
       .then(async (response) => {
+        if (!response) {
+          return reject(new Error('Error: no response from Garmin Connect'))
+        }
         const body = await response.body()
-        const bodyString = await body.toString()
+        const bodyString = body.toString()
         if (DEBUG) {
           console.log('Raw data: ', bodyString)
         }
@@ -180,10 +176,9 @@ async function fetchData(year, month) {
         await browser.close()
         process.stdout.write(` Done.\n`)
         return resolve(content.calendarItems)
-        // return resolve([])
       })
       .catch((error) => {
-        console.log('error fetching data: ', error)
+        console.log('Error fetching data: ', error)
         return reject(error)
       })
   })
@@ -207,7 +202,7 @@ async function fetchData(year, month) {
 
   try {
     const contents = await fs.readFile(program.outputFile, { encoding: 'utf8' })
-    data = JSON.parse(contents)
+    data = JSON.parse(contents) as GarminDataItem[]
     itemsOriginally = data.length
     console.log(`✓ Found existing file with ${itemsOriginally} items.`)
   } catch (err) {
@@ -239,9 +234,9 @@ async function fetchData(year, month) {
       }
     }
 
-    const uniqFn = (x, y) => x.id === y.id
-    const sortFn = (x) => x.timestamp
-    data = /** @type {any[]} */ R.reverse(R.sortBy(sortFn, R.uniqWith(uniqFn, data)))
+    const uniqFn = (x: GarminDataItem, y: GarminDataItem) => x.id === y.id
+    const sortFn = (x: GarminDataItem) => x.timestamp
+    data = R.reverse(R.sortBy(sortFn, R.uniqWith(uniqFn, data)))
   } else {
     if (DEBUG) {
       console.log(`No items found for ${searchYear}-${searchMonth}.`)

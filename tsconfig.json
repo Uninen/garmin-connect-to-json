@@ -11,10 +11,7 @@
     "allowSyntheticDefaultImports": true,
     "lib": ["esnext"],
     "skipLibCheck": true,
-    "types": ["node"],
-    "paths": {
-      "@/*": ["./src/*"]
-    }
+    "types": ["node"]
   },
   "include": ["src/**/*.ts", "tests/**/*.spec.ts", "tests/**/*.test.ts", "src/**/*.d.ts"],
   "exclude": ["node_modules", "bin"]

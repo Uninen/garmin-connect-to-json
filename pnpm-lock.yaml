@@ -3,7 +3,7 @@ lockfileVersion: 5.4
 specifiers:
   '@types/node': ^18.0.0
   app-root-path: ^3.0.0
-  commander: ^6.2.1
+  commander: ^9.3.0
   dayjs: ^1.11.3
   dotenv: ^16.0.1
   path: ^0.12.7
@@ -12,7 +12,7 @@ specifiers:
 
 dependencies:
   app-root-path: 3.0.0
-  commander: 6.2.1
+  commander: 9.3.0
   dayjs: 1.11.3
   dotenv: 16.0.1
   path: 0.12.7
@@ -33,9 +33,9 @@ packages:
     engines: {node: '>= 6.0.0'}
     dev: false
 
-  /commander/6.2.1:
-    resolution: {integrity: sha512-U7VdrJFnJgo4xjrHpTzu0yrHPGImdsmD95ZlgYSEajAn2JKzDhDTPG9kBTefmObL2w/ngeZnilk+OV9CG3d7UA==}
-    engines: {node: '>= 6'}
+  /commander/9.3.0:
+    resolution: {integrity: sha512-hv95iU5uXPbK83mjrJKuZyFM/LBAoCV/XhVGkS5Je6tl7sxr6A0ITMw5WoRV46/UaJ46Nllm3Xt7IaJhXTIkzw==}
+    engines: {node: ^12.20.0 || >=14}
     dev: false
 
   /dayjs/1.11.3:
