@@ -1,6 +1,6 @@
 # Changelog
 
-## v0.0.4 - 2022-06-19
+## v0.0.5 - 2022-06-19
 
 - Refactor: added TS typings in JS source.
 - Docs: added notes about running in CI, added LICENSE and CODE_OF_CONDUCT to repo.
