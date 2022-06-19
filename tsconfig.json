@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
-    "target": "es2020",
-    "module": "node16",
+    "target": "esnext",
+    "module": "esnext",
     "moduleResolution": "node",
     "strict": true,
     "sourceMap": false,
@@ -9,9 +9,9 @@
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "lib": ["ES2021"],
-    "types": ["node"]
+    "types": ["node"],
+    "outDir": "./bin"
   },
-  "include": ["src/**/*.ts", "tests/**/*.spec.ts", "tests/**/*.test.ts", "src/**/*.d.ts"],
+  "include": ["*.ts", "src/**/*.ts", "tests/**/*.spec.ts", "tests/**/*.test.ts", "src/**/*.d.ts"],
   "exclude": ["node_modules", "bin"]
 }

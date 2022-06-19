@@ -2,7 +2,7 @@ import { Command } from 'commander'
 
 export interface GarminCommand extends Command {
   authenticate?: boolean
-  debug?: boolean
+  debug: boolean
   outputFile: string
   month?: string
   failWhenZero?: boolean

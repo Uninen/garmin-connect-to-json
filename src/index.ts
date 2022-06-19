@@ -2,14 +2,13 @@ import { createCommand } from 'commander'
 import dayjs from 'dayjs'
 import dotenv from 'dotenv'
 import fs from 'fs/promises'
-import path from 'path'
 import { chromium } from 'playwright-chromium'
-import R from 'rambda'
-import pkg from '../package.json'
+import { reverse, sortBy, uniqWith } from 'rambda'
+import { version } from '../package.json'
 
-import { GarminCommand, GarminDataItem } from './types'
+import type { GarminCommand, GarminDataItem } from './types'
 
-dotenv.config({ path: path.resolve('../.env') })
+dotenv.config()
 
 const GARMIN_APP_VERSION = '4.55.3.1'
 let data: GarminDataItem[] = []
@@ -28,9 +27,9 @@ program
   .option('-o, --output-file <filepath>', 'specify where to output the tweets', './garminData.json')
   .option('-m, --month <YYYY-MM>', 'the month to fetch in YYYY-MM format (default: current month)')
   .option('--fail-when-zero', 'return exit status 1 if no new items are found')
-  .option('-d, --debug', 'debug (verbose) mode')
+  .option('-d, --debug', 'debug (verbose) mode', false)
   .option('-a, --authenticate', 'forces authentication')
-  .version(pkg.version)
+  .version(version)
   .parse(process.argv)
 
 let forceAuth = !!program.authenticate
@@ -194,7 +193,14 @@ async function fetchData(year: string, month: string) {
     process.exit(1)
   }
 
-  DEBUG = !!program.debug
+  DEBUG = program.debug
+
+  if (DEBUG) {
+    console.log('DEBUG mode enabled.')
+  } else {
+    console.log('DEBUG mode NOT enabled.')
+    process.exit(1)
+  }
 
   if (program.month) {
     ;[searchYear, searchMonth] = program.month.split('-')
@@ -236,7 +242,7 @@ async function fetchData(year: string, month: string) {
 
     const uniqFn = (x: GarminDataItem, y: GarminDataItem) => x.id === y.id
     const sortFn = (x: GarminDataItem) => x.timestamp
-    data = R.reverse(R.sortBy(sortFn, R.uniqWith(uniqFn, data)))
+    data = reverse(sortBy(sortFn, uniqWith(uniqFn, data)))
   } else {
     if (DEBUG) {
       console.log(`No items found for ${searchYear}-${searchMonth}.`)
