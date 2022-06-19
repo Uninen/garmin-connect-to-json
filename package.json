@@ -12,7 +12,8 @@
   "scripts": {
     "clean": "rm -rf build",
     "build": "rollup -c",
-    "dev": "tsx src/index.ts --debug"
+    "dev": "tsx src/index.ts --debug",
+    "test": "vitest"
   },
   "dependencies": {
     "app-root-path": "^3.0.0",
@@ -49,6 +50,7 @@
     "rollup": "2.75.6",
     "tslib": "2.4.0",
     "tsx": "3.4.3",
-    "typescript": "4.7.4"
+    "typescript": "4.7.4",
+    "vitest": "^0.15.1"
   }
 }
