@@ -1,5 +1,3 @@
-#!/usr/bin/env node
-// @ts-check
 const fs = require('fs/promises')
 const R = require('rambda')
 const dayjs = require('dayjs')
@@ -243,7 +241,7 @@ async function fetchData(year, month) {
 
     const uniqFn = (x, y) => x.id === y.id
     const sortFn = (x) => x.timestamp
-    data = /** @type {any[]} */ (R.reverse(R.sortBy(sortFn, R.uniqWith(uniqFn, data))))
+    data = /** @type {any[]} */ R.reverse(R.sortBy(sortFn, R.uniqWith(uniqFn, data)))
   } else {
     if (DEBUG) {
       console.log(`No items found for ${searchYear}-${searchMonth}.`)

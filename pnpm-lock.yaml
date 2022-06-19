@@ -1,8 +1,9 @@
 lockfileVersion: 5.4
 
 specifiers:
+  '@types/node': ^18.0.0
   app-root-path: ^3.0.0
-  commander: ^6
+  commander: ^6.2.1
   dayjs: ^1.11.3
   dotenv: ^16.0.1
   path: ^0.12.7
@@ -18,7 +19,14 @@ dependencies:
   playwright-chromium: 1.22.2
   rambda: 7.1.4
 
+devDependencies:
+  '@types/node': 18.0.0
+
 packages:
+
+  /@types/node/18.0.0:
+    resolution: {integrity: sha512-cHlGmko4gWLVI27cGJntjs/Sj8th9aYwplmZFwmmgYQQvL5NUsgVJG7OddLvNfLqYS31KFN0s3qlaD9qCaxACA==}
+    dev: true
 
   /app-root-path/3.0.0:
     resolution: {integrity: sha512-qMcx+Gy2UZynHjOHOIXPNvpf+9cjvk3cWrBBK7zg4gH9+clobJRb9NGzcT7mQTcV/6Gm/1WelUtqxVXnNlrwcw==}

@@ -30,5 +30,8 @@
   "bugs": {
     "url": "https://github.com/Uninen/garmin-connect-to-json/issues"
   },
-  "homepage": "https://github.com/Uninen/garmin-connect-to-json"
+  "homepage": "https://github.com/Uninen/garmin-connect-to-json",
+  "devDependencies": {
+    "@types/node": "^18.0.0"
+  }
 }
