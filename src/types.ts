@@ -79,3 +79,9 @@ export interface GarminDataItem {
   subscribed: null | boolean
   timestamp: number
 }
+
+export interface fetchDataConfig {
+  debug: boolean
+  forceAuth: boolean
+  browserStoragePath: string
+}
