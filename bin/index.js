@@ -27,16 +27,17 @@ let browserStoragePath = 'sessionStorage.json';
 if (process.env.SESSION_STORAGE_PATH) {
     browserStoragePath = process.env.SESSION_STORAGE_PATH;
 }
-const program = commander.createCommand();
+const program = new commander.Command();
 program
     .option('-o, --output-file <filepath>', 'specify where to output the tweets', './garminData.json')
     .option('-m, --month <YYYY-MM>', 'the month to fetch in YYYY-MM format (default: current month)')
     .option('--fail-when-zero', 'return exit status 1 if no new items are found')
-    .option('-d, --debug', 'debug (verbose) mode', false)
+    .option('-d, --debug', 'debug (verbose) mode')
     .option('-a, --authenticate', 'forces authentication')
     .version(version)
     .parse(process.argv);
-let forceAuth = !!program.authenticate;
+const progOptions = program.opts();
+let forceAuth = !!progOptions.authenticate;
 function sleep(ms) {
     return new Promise((resolve) => {
         setTimeout(resolve, ms);
@@ -179,19 +180,15 @@ async function fetchData(year, month) {
         console.error('Error: GARMIN_CONNECT_PASSWORD environment variable not set.');
         process.exit(1);
     }
-    DEBUG = program.debug;
+    DEBUG = !!progOptions.debug;
     if (DEBUG) {
         console.log('DEBUG mode enabled.');
     }
-    else {
-        console.log('DEBUG mode NOT enabled.');
-        process.exit(1);
-    }
-    if (program.month) {
-        [searchYear, searchMonth] = program.month.split('-');
+    if (progOptions.month) {
+        [searchYear, searchMonth] = progOptions.month.split('-');
     }
     try {
-        const contents = await fs__default["default"].readFile(program.outputFile, { encoding: 'utf8' });
+        const contents = await fs__default["default"].readFile(progOptions.outputFile, { encoding: 'utf8' });
         data = JSON.parse(contents);
         itemsOriginally = data.length;
         console.log(`✓ Found existing file with ${itemsOriginally} items.`);
@@ -231,18 +228,18 @@ async function fetchData(year, month) {
         if (DEBUG) {
             console.log(`No items found for ${searchYear}-${searchMonth}.`);
         }
-        if (program.failWhenZero) {
+        if (progOptions.failWhenZero) {
             process.exit(1);
         }
     }
     if (data.length > itemsOriginally) {
-        await fs__default["default"].writeFile(program.outputFile, JSON.stringify(data, null, 2));
+        await fs__default["default"].writeFile(progOptions.outputFile, JSON.stringify(data, null, 2));
         console.log(`Saved ${data.length} items.`);
         process.exit(0);
     }
     else {
         console.log(`No new items found.`);
-        if (program.failWhenZero) {
+        if (progOptions.failWhenZero) {
             process.exit(1);
         }
         else {

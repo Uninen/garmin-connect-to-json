@@ -3,7 +3,6 @@
   "version": "0.0.5",
   "description": "Save data from your Garmin Connect account into a JSON file.",
   "main": "bin/index.js",
-  "type": "module",
   "bin": {
     "garmin-connect-to-json": "./bin/index.js"
   },
@@ -12,7 +11,6 @@
   "license": "MIT",
   "scripts": {
     "clean": "rm -rf build",
-    "buildt": "tsc",
     "build": "rollup -c",
     "dev": "tsx src/index.ts --debug"
   },

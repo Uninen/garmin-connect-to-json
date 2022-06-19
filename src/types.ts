@@ -1,8 +1,8 @@
-import { Command } from 'commander'
+import { OptionValues } from 'commander'
 
-export interface GarminCommand extends Command {
+export interface GarminCommandOptions extends OptionValues {
   authenticate?: boolean
-  debug: boolean
+  debug?: boolean
   outputFile: string
   month?: string
   failWhenZero?: boolean

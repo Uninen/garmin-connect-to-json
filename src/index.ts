@@ -1,4 +1,4 @@
-import { createCommand } from 'commander'
+import { Command } from 'commander'
 import dayjs from 'dayjs'
 import dotenv from 'dotenv'
 import fs from 'fs/promises'
@@ -6,7 +6,7 @@ import { chromium } from 'playwright-chromium'
 import { reverse, sortBy, uniqWith } from 'rambda'
 import { version } from '../package.json'
 
-import type { GarminCommand, GarminDataItem } from './types'
+import type { GarminCommandOptions, GarminDataItem } from './types'
 
 dotenv.config()
 
@@ -22,17 +22,19 @@ if (process.env.SESSION_STORAGE_PATH) {
   browserStoragePath = process.env.SESSION_STORAGE_PATH
 }
 
-const program = createCommand() as GarminCommand
+const program = new Command()
 program
   .option('-o, --output-file <filepath>', 'specify where to output the tweets', './garminData.json')
   .option('-m, --month <YYYY-MM>', 'the month to fetch in YYYY-MM format (default: current month)')
   .option('--fail-when-zero', 'return exit status 1 if no new items are found')
-  .option('-d, --debug', 'debug (verbose) mode', false)
+  .option('-d, --debug', 'debug (verbose) mode')
   .option('-a, --authenticate', 'forces authentication')
   .version(version)
   .parse(process.argv)
 
-let forceAuth = !!program.authenticate
+const progOptions = program.opts() as GarminCommandOptions
+
+let forceAuth = !!progOptions.authenticate
 
 function sleep(ms: number) {
   return new Promise<void>((resolve) => {
@@ -193,21 +195,18 @@ async function fetchData(year: string, month: string) {
     process.exit(1)
   }
 
-  DEBUG = program.debug
+  DEBUG = !!progOptions.debug
 
   if (DEBUG) {
     console.log('DEBUG mode enabled.')
-  } else {
-    console.log('DEBUG mode NOT enabled.')
-    process.exit(1)
   }
 
-  if (program.month) {
-    ;[searchYear, searchMonth] = program.month.split('-')
+  if (progOptions.month) {
+    ;[searchYear, searchMonth] = progOptions.month.split('-')
   }
 
   try {
-    const contents = await fs.readFile(program.outputFile, { encoding: 'utf8' })
+    const contents = await fs.readFile(progOptions.outputFile, { encoding: 'utf8' })
     data = JSON.parse(contents) as GarminDataItem[]
     itemsOriginally = data.length
     console.log(`✓ Found existing file with ${itemsOriginally} items.`)
@@ -247,18 +246,18 @@ async function fetchData(year: string, month: string) {
     if (DEBUG) {
       console.log(`No items found for ${searchYear}-${searchMonth}.`)
     }
-    if (program.failWhenZero) {
+    if (progOptions.failWhenZero) {
       process.exit(1)
     }
   }
 
   if (data.length > itemsOriginally) {
-    await fs.writeFile(program.outputFile, JSON.stringify(data, null, 2))
+    await fs.writeFile(progOptions.outputFile, JSON.stringify(data, null, 2))
     console.log(`Saved ${data.length} items.`)
     process.exit(0)
   } else {
     console.log(`No new items found.`)
-    if (program.failWhenZero) {
+    if (progOptions.failWhenZero) {
       process.exit(1)
     } else {
       process.exit(0)
