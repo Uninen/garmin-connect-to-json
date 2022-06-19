@@ -1,25 +1,25 @@
 lockfileVersion: 5.4
 
 specifiers:
-  '@rollup/plugin-json': ^4.1.0
-  '@rollup/plugin-typescript': ^8.3.3
-  '@types/node': ^18.0.0
-  '@typescript-eslint/eslint-plugin': ^5.28.0
-  '@typescript-eslint/parser': ^5.28.0
+  '@rollup/plugin-json': 4.1.0
+  '@rollup/plugin-typescript': 8.3.3
+  '@types/node': 18.0.0
+  '@typescript-eslint/eslint-plugin': 5.28.0
+  '@typescript-eslint/parser': 5.28.0
   app-root-path: ^3.0.0
   commander: ^9.3.0
   dayjs: ^1.11.3
   dotenv: ^16.0.1
-  eslint: ^8.18.0
-  eslint-config-prettier: ^8.5.0
-  eslint-plugin-security: ^1.5.0
+  eslint: 8.18.0
+  eslint-config-prettier: 8.5.0
+  eslint-plugin-security: 1.5.0
   path: ^0.12.7
   playwright-chromium: ^1.22.2
   rambda: ^7.1.4
-  rollup: ^2.75.6
-  tslib: ^2.4.0
-  tsx: ^3.4.3
-  typescript: ^4.7.4
+  rollup: 2.75.6
+  tslib: 2.4.0
+  tsx: 3.4.3
+  typescript: 4.7.4
 
 dependencies:
   app-root-path: 3.0.0
@@ -398,7 +398,7 @@ packages:
     dev: false
 
   /concat-map/0.0.1:
-    resolution: {integrity: sha1-2Klr13/Wjfd5OnMDajug1UBdR3s=}
+    resolution: {integrity: sha512-/Srv4dswyQNBfohGpz9o6Yb3Gz3SrUDqBH5rTuhGR7ahtlbYKnVxw2bCFMRljaA7EXHaXZ8wsHdodFvbkhKmqg==}
     dev: true
 
   /cross-spawn/7.0.3:
