@@ -11,10 +11,6 @@ import type { GarminCommandOptions } from './types'
 dotenv.config()
 
 let [searchYear, searchMonth] = dayjs().format('YYYY-M').split('-')
-let browserStoragePath = 'sessionStorage.json'
-if (process.env.SESSION_STORAGE_PATH) {
-  browserStoragePath = process.env.SESSION_STORAGE_PATH
-}
 
 const program = new Command()
 program
@@ -35,6 +31,7 @@ const forceAuth = !!progOptions.authenticate
     console.error('Error: GARMIN_CONNECT_USERNAME environment variable not set.')
     process.exit(1)
   }
+
   if (!process.env.GARMIN_CONNECT_PASSWORD) {
     console.error('Error: GARMIN_CONNECT_PASSWORD environment variable not set.')
     process.exit(1)
@@ -54,7 +51,6 @@ const forceAuth = !!progOptions.authenticate
   try {
     const newActivities = await fetchData(searchYear, searchMonth, {
       forceAuth,
-      browserStoragePath,
     })
 
     if (newActivities.length > 0) {

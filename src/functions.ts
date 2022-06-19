@@ -2,7 +2,13 @@ import dayjs from 'dayjs'
 import { readFile, writeFile } from 'fs/promises'
 import { chromium } from 'playwright-chromium'
 import { reverse, sortBy, uniqWith } from 'rambda'
-import { DEBUG, GARMIN_APP_VERSION, LOGIN_DELAY_MS, USER_AGENT } from './config'
+import {
+  DEBUG,
+  GARMIN_APP_VERSION,
+  LOGIN_DELAY_MS,
+  SESSION_STORAGE_PATH,
+  USER_AGENT,
+} from './config'
 import { fetchDataConfig, GarminCommandOptions, GarminDataItem } from './types'
 
 export function sleep(ms: number) {
@@ -23,7 +29,7 @@ export async function fetchData(year: string, month: string, config: fetchDataCo
 
     if (!config.forceAuth) {
       try {
-        const storageData = await readFile(config.browserStoragePath, {
+        const storageData = await readFile(SESSION_STORAGE_PATH, {
           encoding: 'utf8',
         })
         const storageState = JSON.parse(storageData)
@@ -110,8 +116,8 @@ export async function fetchData(year: string, month: string, config: fetchDataCo
         if (DEBUG) {
           console.log('debug: session storage: ', storageJson)
         }
-        await writeFile(config.browserStoragePath, storageJson)
-        console.log(`✓ Browser session created and saved to ${config.browserStoragePath}`)
+        await writeFile(SESSION_STORAGE_PATH, storageJson)
+        console.log(`✓ Browser session created and saved to ${SESSION_STORAGE_PATH}`)
       } catch (err) {
         if (DEBUG) {
           console.log(err)
