@@ -6,17 +6,17 @@
   "bin": {
     "garmin-connect-to-json": "./bin/index.js"
   },
-  "repository": "git@gitlab.com:uninen/garmin-connect-to-json.git",
+  "repository": "git@github.com:Uninen/garmin-connect-to-json.git",
   "author": "Ville Säävuori <ville@unessa.net>",
   "license": "MIT",
   "dependencies": {
     "app-root-path": "^3.0.0",
     "commander": "^6.2.1",
-    "dayjs": "^1.10.4",
-    "dotenv": "^8.2.0",
+    "dayjs": "^1.11.3",
+    "dotenv": "^16.0.1",
     "path": "^0.12.7",
-    "playwright-chromium": "^1.9.0",
-    "rambda": "^6.5.3"
+    "playwright-chromium": "^1.22.2",
+    "rambda": "^7.1.4"
   },
   "files": [
     "bin/index.js",
@@ -28,7 +28,7 @@
     "json"
   ],
   "bugs": {
-    "url": "https://gitlab.com/uninen/garmin-connect-to-json/-/issues"
+    "url": "https://github.com/Uninen/garmin-connect-to-json/issues"
   },
-  "homepage": "https://gitlab.com/uninen/garmin-connect-to-json"
+  "homepage": "https://github.com/Uninen/garmin-connect-to-json"
 }

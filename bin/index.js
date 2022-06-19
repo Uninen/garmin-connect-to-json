@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+// @ts-check
 const fs = require('fs/promises')
 const R = require('rambda')
 const dayjs = require('dayjs')
@@ -24,15 +25,8 @@ if (process.env.SESSION_STORAGE_PATH) {
 
 const program = new Command()
 program
-  .option(
-    '-o, --output-file <filepath>',
-    'specify where to output the tweets',
-    './garminData.json'
-  )
-  .option(
-    '-m, --month <YYYY-MM>',
-    'the month to fetch in YYYY-MM format (default: current month)'
-  )
+  .option('-o, --output-file <filepath>', 'specify where to output the tweets', './garminData.json')
+  .option('-m, --month <YYYY-MM>', 'the month to fetch in YYYY-MM format (default: current month)')
   .option('--fail-when-zero', 'return exit status 1 if no new items are found')
   .option('-d, --debug', 'debug (verbose) mode')
   .option('-a, --authenticate', 'forces authentication')
@@ -128,12 +122,8 @@ async function fetchData(year, month) {
         }
 
         await page.frames()[1].check('#login-remember-checkbox')
-        await page
-          .frames()[1]
-          .fill('input[name="username"]', process.env.GARMIN_CONNECT_USERNAME)
-        await page
-          .frames()[1]
-          .fill('input[name="password"]', process.env.GARMIN_CONNECT_PASSWORD)
+        await page.frames()[1].fill('input[name="username"]', process.env.GARMIN_CONNECT_USERNAME)
+        await page.frames()[1].fill('input[name="password"]', process.env.GARMIN_CONNECT_PASSWORD)
 
         if (DEBUG) {
           await sleep(LOGIN_DELAY)
@@ -161,9 +151,7 @@ async function fetchData(year, month) {
           console.log('session storage: ', storageJson)
         }
         await fs.writeFile(browserStoragePath, storageJson)
-        console.log(
-          `✓ Browser session created and saved to ${browserStoragePath}`
-        )
+        console.log(`✓ Browser session created and saved to ${browserStoragePath}`)
       } catch (err) {
         if (DEBUG) {
           console.log(err)
@@ -205,15 +193,11 @@ async function fetchData(year, month) {
 
 ;(async () => {
   if (!process.env.GARMIN_CONNECT_USERNAME) {
-    console.error(
-      'Error: GARMIN_CONNECT_USERNAME environment variable not set.'
-    )
+    console.error('Error: GARMIN_CONNECT_USERNAME environment variable not set.')
     process.exit(1)
   }
   if (!process.env.GARMIN_CONNECT_PASSWORD) {
-    console.error(
-      'Error: GARMIN_CONNECT_PASSWORD environment variable not set.'
-    )
+    console.error('Error: GARMIN_CONNECT_PASSWORD environment variable not set.')
     process.exit(1)
   }
 
@@ -259,9 +243,7 @@ async function fetchData(year, month) {
 
     const uniqFn = (x, y) => x.id === y.id
     const sortFn = (x) => x.timestamp
-    data = /** @type {any[]} */ (R.reverse(
-      R.sortBy(sortFn, R.uniqWith(uniqFn, data))
-    ))
+    data = /** @type {any[]} */ (R.reverse(R.sortBy(sortFn, R.uniqWith(uniqFn, data))))
   } else {
     if (DEBUG) {
       console.log(`No items found for ${searchYear}-${searchMonth}.`)

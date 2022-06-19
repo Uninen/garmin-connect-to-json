@@ -1,9 +1,11 @@
 # Changelog
 
-## v0.0.4 - TBA
+## v0.0.4 - 2022-06-19
 
 - Refactor: added TS typings in JS source.
-- Docs: added notes about running in CI.
+- Docs: added notes about running in CI, added LICENSE and CODE_OF_CONDUCT to repo.
+- Chore: bumped deps.
+- Tooling: converted project to use pnpm instead of Yarn.
 
 ## v0.0.3 - 2020-12-31
 

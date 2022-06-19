@@ -7,7 +7,7 @@ Note: Garmin doesn't offer a public API to normal users so this script scrapes t
 ## Configuration
 
 1. Add your Garmin Connect username and password to `GARMIN_CONNECT_USERNAME` and `GARMIN_CONNECT_PASSWORD` environment variables (or into `.env` file in the root of your project).
-   
+
 Note: If you plan to use this script inside a CI pipeline, consider setting `PLAYWRIGHT_BROWSERS_PATH=0` environment variable which forces the installation of the required browser inside `node_modules` which allows the binary to be cached as well. (See my [notes about running in GitLab CI](https://til.unessa.net/gitlab/playwright-gitlab-ci/) for more.)
 
 ## Usage
@@ -30,8 +30,6 @@ Options:
 
 ## Contributing
 
-All contributions are welcome! Please follow the [code of conduct](https://www.contributor-covenant.org/version/2/0/code_of_conduct/) when interacting with others.
-
-[This project lives on GitLab](https://gitlab.com/uninen/garmin-connect-to-json) and is mirrored on GitHub.
+All contributions are welcome! Please follow the [code of conduct](./CODE_OF_CONDUCT.md) when interacting with others.
 
 [Follow @Uninen](https://twitter.com/uninen) on Twitter.
