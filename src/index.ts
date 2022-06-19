@@ -29,6 +29,7 @@ program
   .option('--fail-when-zero', 'return exit status 1 if no new items are found')
   .option('-d, --debug', 'debug (verbose) mode')
   .option('-a, --authenticate', 'forces authentication')
+  .helpOption('-h --help', 'display this help message')
   .version(version)
   .parse(process.argv)
 

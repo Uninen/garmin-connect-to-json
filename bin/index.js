@@ -17,11 +17,11 @@ var version = "0.0.5";
 
 dotenv__default["default"].config();
 const GARMIN_APP_VERSION = '4.55.3.1';
+const LOGIN_DELAY = 1100;
 let data = [];
 let items = [];
 let itemsOriginally = 0;
 let DEBUG = false;
-let LOGIN_DELAY = 1100;
 let [searchYear, searchMonth] = dayjs__default["default"]().format('YYYY-M').split('-');
 let browserStoragePath = 'sessionStorage.json';
 if (process.env.SESSION_STORAGE_PATH) {
@@ -34,6 +34,7 @@ program
     .option('--fail-when-zero', 'return exit status 1 if no new items are found')
     .option('-d, --debug', 'debug (verbose) mode')
     .option('-a, --authenticate', 'forces authentication')
+    .helpOption('-h --help', 'display this help message')
     .version(version)
     .parse(process.argv);
 const progOptions = program.opts();

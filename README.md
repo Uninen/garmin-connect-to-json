@@ -19,14 +19,13 @@ Options:
   --fail-when-zero              return exit status 1 if no new items are found
   -d, --debug                   debug (verbose) mode
   -V, --version                 output the version number
-  -h, --help                    display help for command
+  -h, --help                    display this help message
 ```
 
 ### Running in CI
 
-When running this from CI, you might find `--fail-when-zero` flag handy as it returns error code 1 when there are no items.
-
-Setting `PLAYWRIGHT_BROWSERS_PATH=0` environment variable forces the installation of the required browser inside `node_modules` which allows the binary to be cached as well. (See my [notes about running PlayWright in GitLab CI](https://til.unessa.net/gitlab/playwright-gitlab-ci/) for more.)
+- When running this from CI, you might find `--fail-when-zero` flag handy as it returns error code 1 when no items were found (exposing possible errors in the pipeline).
+- Setting `PLAYWRIGHT_BROWSERS_PATH=0` environment variable forces the installation of the required browser inside `node_modules` which allows the binary to be cached as well. (See my [notes about running PlayWright in GitLab CI](https://til.unessa.net/gitlab/playwright-gitlab-ci/) for more.)
 
 ## About Data Formats
 
