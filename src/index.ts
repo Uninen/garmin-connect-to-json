@@ -4,15 +4,13 @@ import dotenv from 'dotenv'
 import fs from 'fs/promises'
 import { reverse, sortBy, uniqWith } from 'rambda'
 import { version } from '../package.json'
-import { fetchData } from './functions'
+import { fetchData, readExistingFile } from './functions'
 
 import type { GarminCommandOptions, GarminDataItem } from './types'
 
 dotenv.config()
 
-let data: GarminDataItem[] = []
 let items: GarminDataItem[] = []
-let existingActivitiesCount = 0
 let DEBUG = false
 let [searchYear, searchMonth] = dayjs().format('YYYY-M').split('-')
 let browserStoragePath = 'sessionStorage.json'
@@ -55,17 +53,10 @@ const forceAuth = !!progOptions.authenticate
     ;[searchYear, searchMonth] = progOptions.month.split('-')
   }
 
-  try {
-    const contents = await fs.readFile(progOptions.outputFile, { encoding: 'utf8' })
-    data = JSON.parse(contents) as GarminDataItem[]
-    existingActivitiesCount = data.length
-    console.log(`✓ Found existing file with ${existingActivitiesCount} items.`)
-  } catch (err) {
-    console.log('No existing file found.')
-  }
+  const { existingActivitiesCount, existingData } = await readExistingFile(progOptions)
+  let data = existingData
 
   process.stdout.write(`Querying ${searchYear}-${searchMonth}.. `)
-
   try {
     items = await fetchData(searchYear, searchMonth, {
       debug: DEBUG,

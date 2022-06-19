@@ -1,8 +1,8 @@
 import { chromium } from 'playwright-chromium'
-import { fetchDataConfig, GarminDataItem } from './types'
+import { fetchDataConfig, GarminCommandOptions, GarminDataItem } from './types'
 
 import { readFile, writeFile } from 'fs/promises'
-import { GARMIN_APP_VERSION, LOGIN_DELAY } from './config'
+import { GARMIN_APP_VERSION, LOGIN_DELAY_MS, USER_AGENT } from './config'
 
 export function sleep(ms: number) {
   return new Promise<void>((resolve) => {
@@ -41,8 +41,7 @@ export async function fetchData(year: string, month: string, config: fetchDataCo
 
     if (config.forceAuth || !context) {
       context = await browser.newContext({
-        userAgent:
-          'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/102.0.0.0 Safari/537.36',
+        userAgent: USER_AGENT,
         viewport: { width: 1280, height: 1024 },
       })
     }
@@ -63,7 +62,7 @@ export async function fetchData(year: string, month: string, config: fetchDataCo
       try {
         await page.goto('https://connect.garmin.com/signin')
         await page.waitForSelector('iframe')
-        await sleep(LOGIN_DELAY)
+        await sleep(LOGIN_DELAY_MS)
 
         try {
           await page.waitForSelector('#truste-consent-button')
@@ -74,7 +73,7 @@ export async function fetchData(year: string, month: string, config: fetchDataCo
         }
 
         if (config.debug) {
-          await sleep(LOGIN_DELAY)
+          await sleep(LOGIN_DELAY_MS)
           await page.screenshot({
             path: `debug-00-unfilled-login.png`,
             fullPage: true,
@@ -86,7 +85,7 @@ export async function fetchData(year: string, month: string, config: fetchDataCo
         await page.frames()[1].fill('input[name="password"]', process.env.GARMIN_CONNECT_PASSWORD!)
 
         if (config.debug) {
-          await sleep(LOGIN_DELAY)
+          await sleep(LOGIN_DELAY_MS)
           await page.screenshot({
             path: `debug-01-filled-login.png`,
             fullPage: true,
@@ -95,7 +94,7 @@ export async function fetchData(year: string, month: string, config: fetchDataCo
 
         await page.frames()[1].click('#login-btn-signin')
         await page.waitForSelector('.user-profile')
-        await sleep(LOGIN_DELAY * 2)
+        await sleep(LOGIN_DELAY_MS * 2)
         if (config.debug) {
           await page.screenshot({
             path: `debug-02-after-login.png`,
@@ -121,7 +120,7 @@ export async function fetchData(year: string, month: string, config: fetchDataCo
     }
 
     await page.goto('https://connect.garmin.com/modern/calendar')
-    await sleep(LOGIN_DELAY * 2)
+    await sleep(LOGIN_DELAY_MS * 2)
     if (config.debug) {
       await page.screenshot({
         path: `debug-03-calendar-home.png`,
@@ -151,4 +150,19 @@ export async function fetchData(year: string, month: string, config: fetchDataCo
         return reject(error)
       })
   })
+}
+
+export async function readExistingFile(options: GarminCommandOptions) {
+  let existingActivitiesCount = 0
+  let existingData: GarminDataItem[] = []
+
+  try {
+    const contents = await readFile(options.outputFile, { encoding: 'utf8' })
+    existingData = JSON.parse(contents) as GarminDataItem[]
+    existingActivitiesCount = existingData.length
+    console.log(`✓ Found existing file with ${existingActivitiesCount} items.`)
+  } catch (err) {
+    console.log('No existing file found.')
+  }
+  return { existingActivitiesCount, existingData }
 }
