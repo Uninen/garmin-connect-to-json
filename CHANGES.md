@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.1.0 - TBA
+
+- Refactor: converted project to TypeScript.
+- Tooling: Use Rollup for building.
+
 ## v0.0.5 - 2022-06-19
 
 - Refactor: added TS typings in JS source.
