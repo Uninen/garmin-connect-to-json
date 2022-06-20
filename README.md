@@ -17,7 +17,6 @@ Options:
   -o, --output-file <filepath>  specify where to output the tweets (default: "./garminData.json")
   -m, --month <YYYY-MM>         the month to fetch in YYYY-MM format (default: current month)
   --fail-when-zero              return exit status 1 if no new items are found
-  -d, --debug                   debug (verbose) mode
   -V, --version                 output the version number
   -h, --help                    display this help message
 ```
