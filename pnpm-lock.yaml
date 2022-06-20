@@ -1,6 +1,7 @@
 lockfileVersion: 5.4
 
 specifiers:
+  '@playwright/test': ^1.22.2
   '@rollup/plugin-json': 4.1.0
   '@rollup/plugin-typescript': 8.3.3
   '@types/node': 18.0.0
@@ -17,6 +18,7 @@ specifiers:
   msw: ^0.42.1
   path: ^0.12.7
   playwright-chromium: ^1.22.2
+  playwright-request-mocker: ^0.3.0
   rambda: ^7.1.4
   rollup: 2.75.6
   tslib: 2.4.0
@@ -34,6 +36,7 @@ dependencies:
   rambda: 7.1.4
 
 devDependencies:
+  '@playwright/test': 1.22.2
   '@rollup/plugin-json': 4.1.0_rollup@2.75.6
   '@rollup/plugin-typescript': 8.3.3_4xdesyritndjspb2ek4ggx2cym
   '@types/node': 18.0.0
@@ -44,6 +47,7 @@ devDependencies:
   eslint-plugin-security: 1.5.0
   jsdom: 20.0.0
   msw: 0.42.1_typescript@4.7.4
+  playwright-request-mocker: 0.3.0_@playwright+test@1.22.2
   rollup: 2.75.6
   tslib: 2.4.0
   tsx: 3.4.3
@@ -150,6 +154,15 @@ packages:
 
   /@open-draft/until/1.0.3:
     resolution: {integrity: sha512-Aq58f5HiWdyDlFffbbSjAlv596h/cOnt2DO1w3DOC7OJ5EHs0hd/nycJfiu9RJbT6Yk6F1knnRRXNSpxoIVZ9Q==}
+    dev: true
+
+  /@playwright/test/1.22.2:
+    resolution: {integrity: sha512-cCl96BEBGPtptFz7C2FOSN3PrTnJ3rPpENe+gYCMx4GNNDlN4tmo2D89y13feGKTMMAIVrXfSQ/UmaQKLy1XLA==}
+    engines: {node: '>=14'}
+    hasBin: true
+    dependencies:
+      '@types/node': 18.0.0
+      playwright-core: 1.22.2
     dev: true
 
   /@rollup/plugin-json/4.1.0_rollup@2.75.6:
@@ -1817,7 +1830,14 @@ packages:
     resolution: {integrity: sha512-w/hc/Ld0RM4pmsNeE6aL/fPNWw8BWit2tg+TfqJ3+p59c6s3B6C8mXvXrIPmfQEobkcFDc+4KirNzOQ+uBSP1Q==}
     engines: {node: '>=14'}
     hasBin: true
-    dev: false
+
+  /playwright-request-mocker/0.3.0_@playwright+test@1.22.2:
+    resolution: {integrity: sha512-pu0/tvvOGXmkI6ReCGDqwns4+bM9iIPkjMjaJ9jP9Ao6+Z+e3N6RXmfdSulq4ZUNIjI1OBjeW3ulZJpfOebjUg==}
+    peerDependencies:
+      '@playwright/test': ^1.12.3
+    dependencies:
+      '@playwright/test': 1.22.2
+    dev: true
 
   /postcss/8.4.14:
     resolution: {integrity: sha512-E398TUmfAYFPBSdzgeieK2Y1+1cpdxJx8yXbK/m57nRhKSmk1GB2tO4lbLBtlkfPQTDKfe4Xqv1ASWPpayPEig==}

@@ -4,7 +4,7 @@ import dotenv from 'dotenv'
 import { writeFile } from 'fs/promises'
 import { version } from '../package.json'
 import { DEBUG } from './config'
-import { fetchData, getExistingData, processActivities } from './functions'
+import { fetchData, getBrowserInstance, getExistingData, processActivities } from './functions'
 
 import type { GarminCommandOptions } from './types'
 
@@ -47,11 +47,16 @@ const forceAuth = !!progOptions.authenticate
 
   const { existingActivitiesCount, existingActivities } = await getExistingData(progOptions)
 
+  const { browser, context, page } = await getBrowserInstance(forceAuth)
+
   process.stdout.write(`Querying ${searchYear}-${searchMonth}.. `)
   try {
     const newActivities = await fetchData(searchYear, searchMonth, {
+      context,
+      page,
       forceAuth,
     })
+    await browser.close()
 
     if (newActivities.length > 0) {
       if (DEBUG) {
@@ -80,6 +85,7 @@ const forceAuth = !!progOptions.authenticate
       }
     }
   } catch (err) {
+    await browser.close()
     console.log('Data fetching failed.')
     process.exit(1)
   }

@@ -1,4 +1,5 @@
 import { OptionValues } from 'commander'
+import type { BrowserContext, Page } from 'playwright-chromium'
 
 export interface GarminCommandOptions extends OptionValues {
   authenticate?: boolean
@@ -81,5 +82,7 @@ export interface GarminDataItem {
 }
 
 export interface fetchDataConfig {
+  context: BrowserContext
+  page: Page
   forceAuth: boolean
 }
