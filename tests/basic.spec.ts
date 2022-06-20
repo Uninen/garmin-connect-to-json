@@ -3,8 +3,8 @@ import { fetchData, getBrowserInstance } from '../src/functions'
 
 import apiResponse from './testdata/apiResponse.json'
 
-describe('example test', () => {
-  test('assert', async () => {
+describe('Test API Calls', () => {
+  test('fetchData', async () => {
     const { context, page } = await getBrowserInstance(false)
 
     await page.route('https://connect.garmin.com/modern/proxy/calendar-service/year/**', (route) =>
@@ -21,6 +21,7 @@ describe('example test', () => {
       })
     )
 
-    expect(await fetchData('2022', '06', { context, page, forceAuth: false })).toEqual(apiResponse)
-  }, 20000)
+    const data = await fetchData('2022', '06', { context, page, forceAuth: false })
+    expect(data).toMatchObject(apiResponse.calendarItems)
+  }, 30000)
 })

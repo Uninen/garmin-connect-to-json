@@ -16,15 +16,6 @@
     "test": "vitest",
     "test:ci": "vitest"
   },
-  "dependencies": {
-    "app-root-path": "^3.0.0",
-    "commander": "^9.3.0",
-    "dayjs": "^1.11.3",
-    "dotenv": "^16.0.1",
-    "path": "^0.12.7",
-    "playwright-chromium": "^1.22.2",
-    "rambda": "^7.1.4"
-  },
   "files": [
     "bin/index.js",
     "LICENSE",
@@ -39,6 +30,15 @@
     "url": "https://github.com/Uninen/garmin-connect-to-json/issues"
   },
   "homepage": "https://github.com/Uninen/garmin-connect-to-json",
+  "dependencies": {
+    "app-root-path": "^3.0.0",
+    "commander": "^9.3.0",
+    "dayjs": "^1.11.3",
+    "dotenv": "^16.0.1",
+    "path": "^0.12.7",
+    "playwright-chromium": "^1.22.2",
+    "rambda": "^7.1.4"
+  },
   "devDependencies": {
     "@playwright/test": "^1.22.2",
     "@rollup/plugin-json": "4.1.0",
@@ -49,7 +49,6 @@
     "eslint": "8.18.0",
     "eslint-config-prettier": "8.5.0",
     "eslint-plugin-security": "1.5.0",
-    "jsdom": "^20.0.0",
     "msw": "^0.42.1",
     "playwright-request-mocker": "^0.3.0",
     "rollup": "2.75.6",

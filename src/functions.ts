@@ -159,6 +159,9 @@ export async function fetchData(year: string, month: string, config: fetchDataCo
 
         const content = await JSON.parse(bodyString)
         process.stdout.write(` Done.\n`)
+        if (DEBUG) {
+          console.log('debug: resolving with: ', content.calendarItems)
+        }
         return resolve(content.calendarItems)
       })
       .catch((error) => {
