@@ -12,6 +12,12 @@ import {
 } from './config'
 import { EnrichedGarminDataItem, fetchDataConfig, GarminDataItem } from './types'
 
+import timezone from 'dayjs/plugin/timezone'
+import utc from 'dayjs/plugin/utc'
+
+dayjs.extend(utc)
+dayjs.extend(timezone)
+
 export function sleep(ms: number) {
   return new Promise<void>((resolve) => {
     setTimeout(resolve, ms)
@@ -190,7 +196,7 @@ export function processActivities(activities: (GarminDataItem | EnrichedGarminDa
   const sortedActivities: EnrichedGarminDataItem[] = []
 
   for (const obj of activities) {
-    const timestamp = dayjs(obj.startTimestampLocal).unix()
+    const timestamp = dayjs.tz(obj.startTimestampLocal, 'UTC').unix()
     if (timestamp) {
       sortedActivities.push({ ...obj, timestamp: timestamp })
     } else {
