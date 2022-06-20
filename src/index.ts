@@ -45,7 +45,9 @@ const forceAuth = !!progOptions.authenticate
     ;[searchYear, searchMonth] = progOptions.month.split('-')
   }
 
-  const { existingActivitiesCount, existingActivities } = await getExistingData(progOptions)
+  const { existingActivitiesCount, existingActivities } = await getExistingData(
+    progOptions.outputFile
+  )
 
   const { browser, context, page } = await getBrowserInstance(forceAuth)
 

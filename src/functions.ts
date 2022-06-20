@@ -10,7 +10,7 @@ import {
   SESSION_STORAGE_PATH,
   USER_AGENT,
 } from './config'
-import { fetchDataConfig, GarminCommandOptions, GarminDataItem } from './types'
+import { EnrichedGarminDataItem, fetchDataConfig, GarminDataItem } from './types'
 
 export function sleep(ms: number) {
   return new Promise<void>((resolve) => {
@@ -171,13 +171,13 @@ export async function fetchData(year: string, month: string, config: fetchDataCo
   })
 }
 
-export async function getExistingData(options: GarminCommandOptions) {
+export async function getExistingData(outputFile: string) {
   let existingActivitiesCount = 0
-  let existingActivities: GarminDataItem[] = []
+  let existingActivities: EnrichedGarminDataItem[] = []
 
   try {
-    const contents = await readFile(options.outputFile, { encoding: 'utf8' })
-    existingActivities = JSON.parse(contents) as GarminDataItem[]
+    const contents = await readFile(outputFile, { encoding: 'utf8' })
+    existingActivities = JSON.parse(contents) as EnrichedGarminDataItem[]
     existingActivitiesCount = existingActivities.length
     console.log(`✓ Found existing file with ${existingActivitiesCount} items.`)
   } catch (err) {
@@ -186,8 +186,8 @@ export async function getExistingData(options: GarminCommandOptions) {
   return { existingActivitiesCount, existingActivities }
 }
 
-export function processActivities(activities: GarminDataItem[]) {
-  const sortedActivities: GarminDataItem[] = []
+export function processActivities(activities: (GarminDataItem | EnrichedGarminDataItem)[]) {
+  const sortedActivities: EnrichedGarminDataItem[] = []
 
   for (const obj of activities) {
     const timestamp = dayjs(obj.startTimestampLocal).unix()
@@ -201,7 +201,7 @@ export function processActivities(activities: GarminDataItem[]) {
     }
   }
 
-  const uniqFn = (x: GarminDataItem, y: GarminDataItem) => x.id === y.id
-  const sortFn = (x: GarminDataItem) => x.timestamp
+  const uniqFn = (x: EnrichedGarminDataItem, y: EnrichedGarminDataItem) => x.id === y.id
+  const sortFn = (x: EnrichedGarminDataItem) => x.timestamp
   return reverse(sortBy(sortFn, uniqWith(uniqFn, sortedActivities)))
 }
