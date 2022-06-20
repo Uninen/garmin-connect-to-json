@@ -1,4 +1,5 @@
 import { OptionValues } from 'commander'
+import type { BrowserContext, Page } from 'playwright-chromium'
 
 export interface GarminCommandOptions extends OptionValues {
   authenticate?: boolean
@@ -22,7 +23,7 @@ export interface GarminDataItem {
   calories: number
   floorsClimbed: null | number
   avgRespirationRate: null | number
-  unitOfPoolLength?: {
+  unitOfPoolLength?: null | {
     unitId: number
     unitKey: string
     factor: number
@@ -57,7 +58,7 @@ export interface GarminDataItem {
   workoutId: null | string
   protectedWorkoutSchedule: boolean
   activeSets: null | number
-  strokes: number
+  strokes: null | number
   noOfSplits: null | number
   maxGradeValue: null | number
   totalAscent: null | number
@@ -77,5 +78,15 @@ export interface GarminDataItem {
   primaryEvent: null | string
   shareableEvent: boolean
   subscribed: null | boolean
+  timestamp?: number
+}
+
+export interface EnrichedGarminDataItem extends GarminDataItem {
   timestamp: number
+}
+
+export interface fetchDataConfig {
+  context: BrowserContext
+  page: Page
+  forceAuth: boolean
 }

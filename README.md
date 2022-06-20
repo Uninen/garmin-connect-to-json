@@ -22,10 +22,12 @@ Options:
   -h, --help                    display this help message
 ```
 
-### Running in CI
+### Running in CI and Debugging
 
 - When running this from CI, you might find `--fail-when-zero` flag handy as it returns error code 1 when no items were found (exposing possible errors in the pipeline).
 - Setting `PLAYWRIGHT_BROWSERS_PATH=0` environment variable forces the installation of the required browser inside `node_modules` which allows the binary to be cached as well. (See my [notes about running PlayWright in GitLab CI](https://til.unessa.net/gitlab/playwright-gitlab-ci/) for more.)
+- Browser session is saved by default in `./sessionStorage.json` but this can be overridden by setting `SESSION_STORAGE_PATH`
+- Set `GARMIN_CONNECT_DEBUG` to enable debug mode.
 
 ## About Data Formats
 
