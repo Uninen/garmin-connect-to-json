@@ -49,8 +49,6 @@
     "eslint": "8.18.0",
     "eslint-config-prettier": "8.5.0",
     "eslint-plugin-security": "1.5.0",
-    "msw": "^0.42.1",
-    "playwright-request-mocker": "^0.3.0",
     "rollup": "2.75.6",
     "tslib": "2.4.0",
     "tsx": "3.4.3",
