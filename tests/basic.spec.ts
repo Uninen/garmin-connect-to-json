@@ -5,7 +5,7 @@ import { EnrichedGarminDataItem } from '../src/types'
 import apiResponse from './testdata/apiResponse.json'
 import existingActivitiesJson from './testdata/existingActivities.json'
 
-test.skip('fetchData()', async () => {
+test('fetchData()', async () => {
   const { context, page } = await getBrowserInstance(false)
 
   await page.route('https://connect.garmin.com/modern/proxy/calendar-service/year/**', (route) =>
