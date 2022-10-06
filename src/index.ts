@@ -14,7 +14,7 @@ let [searchYear, searchMonth] = dayjs().format('YYYY-M').split('-')
 
 const program = new Command()
 program
-  .option('-o, --output-file <filepath>', 'specify where to output the tweets', './garminData.json')
+  .option('-o, --output-file <filepath>', 'specify where to output the data', './garminData.json')
   .option('-m, --month <YYYY-MM>', 'the month to fetch in YYYY-MM format (default: current month)')
   .option('--fail-when-zero', 'return exit status 1 if no new items are found')
   .option('-a, --authenticate', 'forces authentication')

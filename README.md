@@ -14,7 +14,7 @@ When you run `garmin-connect-to-json` first time, `garminData.json` file is crea
 Usage: garmin-connect-to-json [options]
 
 Options:
-  -o, --output-file <filepath>  specify where to output the tweets (default: "./garminData.json")
+  -o, --output-file <filepath>  specify where to output the data (default: "./garminData.json")
   -m, --month <YYYY-MM>         the month to fetch in YYYY-MM format (default: current month)
   --fail-when-zero              return exit status 1 if no new items are found
   -V, --version                 output the version number
