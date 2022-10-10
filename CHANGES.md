@@ -1,6 +1,6 @@
 # Changelog
 
-## v0.1.0 - TBA
+## v0.1.0 - 2022-10-10
 
 - Refactor: converted project to TypeScript.
 - Fix: normalized timestamps.
