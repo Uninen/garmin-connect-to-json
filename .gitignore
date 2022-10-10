@@ -38,3 +38,4 @@ garminData.json
 sessionStorage.json
 *.png
 bin/
+src/testfn.ts

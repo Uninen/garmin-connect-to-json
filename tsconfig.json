@@ -12,6 +12,6 @@
     "types": ["node"],
     "outDir": "./bin"
   },
-  "include": ["*.ts", "src/**/*.ts", "tests/**/*.spec.ts", "tests/**/*.test.ts", "src/**/*.d.ts"],
+  "include": ["*.ts", "src/*.ts", "tests/**/*.spec.ts", "tests/**/*.test.ts", "src/**/*.d.ts"],
   "exclude": ["node_modules", "bin"]
 }

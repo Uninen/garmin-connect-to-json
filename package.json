@@ -1,6 +1,6 @@
 {
   "name": "garmin-connect-to-json",
-  "version": "0.0.5",
+  "version": "0.1.0",
   "description": "Save data from your Garmin Connect account into a JSON file.",
   "main": "bin/index.js",
   "bin": {
@@ -12,7 +12,8 @@
   "scripts": {
     "clean": "rm -rf build",
     "build": "rollup -c",
-    "dev": "tsx src/index.ts --debug",
+    "dev": "GARMIN_CONNECT_DEBUG=1 tsx src/index.ts",
+    "bdev": "GARMIN_CONNECT_DEBUG=1 node bin/index.js",
     "test": "vitest",
     "test:ci": "vitest"
   },
@@ -31,28 +32,28 @@
   },
   "homepage": "https://github.com/Uninen/garmin-connect-to-json",
   "dependencies": {
-    "app-root-path": "^3.0.0",
-    "commander": "^9.3.0",
-    "dayjs": "^1.11.3",
-    "dotenv": "^16.0.1",
-    "path": "^0.12.7",
-    "playwright-chromium": "^1.22.2",
-    "rambda": "^7.1.4"
+    "app-root-path": "3.1.0",
+    "commander": "9.4.1",
+    "dayjs": "1.11.5",
+    "dotenv": "16.0.3",
+    "path": "0.12.7",
+    "playwright-chromium": "1.26.1",
+    "rambda": "7.3.0"
   },
   "devDependencies": {
-    "@playwright/test": "1.23.2",
+    "@playwright/test": "1.26.1",
     "@rollup/plugin-json": "4.1.0",
-    "@rollup/plugin-typescript": "8.3.3",
-    "@types/node": "18.0.0",
-    "@typescript-eslint/eslint-plugin": "5.30.6",
-    "@typescript-eslint/parser": "5.30.6",
-    "eslint": "8.19.0",
+    "@rollup/plugin-typescript": "8.5.0",
+    "@tsconfig/node16": "^1.0.3",
+    "@types/node": "18.8.2",
+    "@typescript-eslint/eslint-plugin": "5.39.0",
+    "@typescript-eslint/parser": "5.39.0",
+    "eslint": "8.24.0",
     "eslint-config-prettier": "8.5.0",
     "eslint-plugin-security": "1.5.0",
-    "rollup": "2.76.0",
-    "tslib": "2.4.0",
-    "tsx": "3.7.1",
-    "typescript": "4.7.4",
-    "vitest": "0.15.2"
+    "rollup": "2.79.1",
+    "tsx": "3.9.0",
+    "typescript": "4.8.4",
+    "vitest": "0.23.4"
   }
 }

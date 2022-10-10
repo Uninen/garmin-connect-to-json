@@ -94,7 +94,7 @@ export async function fetchData(year: string, month: string, config: fetchDataCo
         if (DEBUG) {
           await sleep(LOGIN_DELAY_MS)
           await config.page.screenshot({
-            path: `debug-00-unfilled-login.png`,
+            path: '/Users/uninen/Code/Libraries/garminconnect/debug-00-unfilled-login.png',
             fullPage: true,
           })
         }
@@ -110,7 +110,7 @@ export async function fetchData(year: string, month: string, config: fetchDataCo
         if (DEBUG) {
           await sleep(LOGIN_DELAY_MS)
           await config.page.screenshot({
-            path: `debug-01-filled-login.png`,
+            path: '/Users/uninen/Code/Libraries/garminconnect/debug-01-filled-login.png',
             fullPage: true,
           })
         }
@@ -120,7 +120,7 @@ export async function fetchData(year: string, month: string, config: fetchDataCo
         await sleep(LOGIN_DELAY_MS * 2)
         if (DEBUG) {
           await config.page.screenshot({
-            path: `debug-02-after-login.png`,
+            path: '/Users/uninen/Code/Libraries/garminconnect/debug-02-after-login.png',
             fullPage: true,
           })
         }
@@ -146,7 +146,7 @@ export async function fetchData(year: string, month: string, config: fetchDataCo
     await sleep(LOGIN_DELAY_MS * 2)
     if (DEBUG) {
       await config.page.screenshot({
-        path: `debug-03-calendar-home.png`,
+        path: '/Users/uninen/Code/Libraries/garminconnect/debug-03-calendar-home.png',
         fullPage: true,
       })
     }

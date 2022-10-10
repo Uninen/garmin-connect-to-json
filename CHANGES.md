@@ -2,12 +2,13 @@
 
 ## v0.1.0 - TBA
 
-- Fix: normalize timestamps.
 - Refactor: converted project to TypeScript.
+- Fix: normalized timestamps.
 - Tooling: Added tests.
 - Tooling: Use Rollup for building.
 - Tooling: Added ESlint.
 - Tooling: Added Renovate bot for keeping up with deps.
+- Chore: bumped deps.
 
 ## v0.0.5 - 2022-06-19
 
