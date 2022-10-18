@@ -1,6 +1,6 @@
 {
   "name": "garmin-connect-to-json",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Save data from your Garmin Connect account into a JSON file.",
   "main": "bin/index.js",
   "bin": {
@@ -11,7 +11,8 @@
   "license": "MIT",
   "scripts": {
     "clean": "rm -rf build",
-    "build": "rollup -c",
+    "build": "pnpm run typecheck && rollup -c --bundleConfigAsCjs",
+    "typecheck": "tsc --noEmit",
     "dev": "GARMIN_CONNECT_DEBUG=1 tsx src/index.ts",
     "bdev": "GARMIN_CONNECT_DEBUG=1 node bin/index.js",
     "test": "vitest",
@@ -42,18 +43,18 @@
   },
   "devDependencies": {
     "@playwright/test": "1.26.1",
-    "@rollup/plugin-json": "4.1.0",
-    "@rollup/plugin-typescript": "8.5.0",
-    "@tsconfig/node16": "^1.0.3",
-    "@types/node": "18.8.2",
-    "@typescript-eslint/eslint-plugin": "5.39.0",
-    "@typescript-eslint/parser": "5.39.0",
-    "eslint": "8.24.0",
+    "@rollup/plugin-json": "5.0.0",
+    "@rollup/plugin-typescript": "9.0.1",
+    "@tsconfig/node16": "1.0.3",
+    "@types/node": "18.11.0",
+    "@typescript-eslint/eslint-plugin": "5.40.1",
+    "@typescript-eslint/parser": "5.40.1",
+    "eslint": "8.25.0",
     "eslint-config-prettier": "8.5.0",
     "eslint-plugin-security": "1.5.0",
-    "rollup": "2.79.1",
-    "tsx": "3.9.0",
+    "rollup": "3.2.3",
+    "tsx": "3.10.3",
     "typescript": "4.8.4",
-    "vitest": "0.23.4"
+    "vitest": "0.24.3"
   }
 }

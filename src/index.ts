@@ -1,7 +1,7 @@
 import { Command } from 'commander'
 import dayjs from 'dayjs'
 import dotenv from 'dotenv'
-import { writeFile } from 'fs/promises'
+import { writeFile } from 'node:fs/promises'
 import { version } from '../package.json'
 import { DEBUG } from './config'
 import { fetchData, getBrowserInstance, getExistingData, processActivities } from './functions'
@@ -23,7 +23,6 @@ program
   .parse(process.argv)
 
 const progOptions = program.opts() as GarminCommandOptions
-
 const forceAuth = !!progOptions.authenticate
 
 ;(async () => {
@@ -56,7 +55,6 @@ const forceAuth = !!progOptions.authenticate
     const newActivities = await fetchData(searchYear, searchMonth, {
       context,
       page,
-      forceAuth,
     })
     await browser.close()
 

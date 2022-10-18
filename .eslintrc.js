@@ -15,6 +15,8 @@ module.exports = {
     'comma-dangle': ['error', 'only-multiline'],
     'security/detect-non-literal-fs-filename': 'off',
     '@typescript-eslint/no-non-null-assertion': 'off',
+    'id-length': [2, { exceptions: ['x', 'y', 'i', 'j', '_'] }],
+    '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '_' }],
   },
   globals: {
     defineProps: 'readonly',

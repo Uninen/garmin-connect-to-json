@@ -8,4 +8,14 @@ export default {
     format: 'cjs',
   },
   plugins: [typescript(), json()],
+  external: [
+    'commander',
+    'dayjs',
+    'dotenv',
+    'node:fs/promises',
+    'playwright-chromium',
+    'rambda',
+    'dayjs/plugin/timezone',
+    'dayjs/plugin/utc',
+  ],
 }

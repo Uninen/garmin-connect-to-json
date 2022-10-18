@@ -1,4 +1,4 @@
-export const DEBUG = process.env.GARMIN_CONNECT_DEBUG
+export const DEBUG = !!process.env.GARMIN_CONNECT_DEBUG
 export const GARMIN_APP_VERSION = '4.59.2.0'
 export const LOGIN_DELAY_MS = 1100
 export const USER_AGENT =
