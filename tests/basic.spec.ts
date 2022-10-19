@@ -22,7 +22,7 @@ test('fetchData()', async () => {
     })
   )
 
-  const data = await fetchData('2022', '06', { context, page, forceAuth: false })
+  const data = await fetchData('2022', '06', { context, page })
   expect(data).toMatchObject(apiResponse.calendarItems)
 })
 

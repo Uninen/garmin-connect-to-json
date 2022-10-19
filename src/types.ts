@@ -88,5 +88,4 @@ export interface EnrichedGarminDataItem extends GarminDataItem {
 export interface fetchDataConfig {
   context: BrowserContext
   page: Page
-  forceAuth: boolean
 }
