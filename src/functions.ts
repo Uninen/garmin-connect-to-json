@@ -1,4 +1,6 @@
 import dayjs from 'dayjs'
+import timezone from 'dayjs/plugin/timezone'
+import utc from 'dayjs/plugin/utc'
 import { readFile, writeFile } from 'node:fs/promises'
 import type { BrowserContext, Page } from 'playwright-chromium'
 import { chromium } from 'playwright-chromium'
@@ -12,19 +14,18 @@ import {
 } from './config'
 import { EnrichedGarminDataItem, fetchDataConfig, GarminDataItem } from './types'
 
-import timezone from 'dayjs/plugin/timezone'
-import utc from 'dayjs/plugin/utc'
+import StreamZip from 'node-stream-zip'
 
 dayjs.extend(utc)
 dayjs.extend(timezone)
 
-export function sleep(ms: number) {
+function sleep(ms: number) {
   return new Promise<void>((resolve) => {
     setTimeout(resolve, ms)
   })
 }
 
-export async function authenticate(context: BrowserContext, page: Page) {
+async function authenticate(context: BrowserContext, page: Page) {
   if (DEBUG) {
     console.log('debug: authenticating session')
   }
@@ -74,9 +75,9 @@ export async function authenticate(context: BrowserContext, page: Page) {
 
     const storage = await context.storageState()
     const storageJson = JSON.stringify(storage, null, 2)
-    if (DEBUG) {
-      console.log('debug: session storage: ', storageJson)
-    }
+    // if (DEBUG) {
+    //   console.log('debug: session storage: ', storageJson)
+    // }
     await writeFile(SESSION_STORAGE_PATH, storageJson)
     console.log(`✓ Browser session created and saved to ${SESSION_STORAGE_PATH}`)
   } catch (error) {
@@ -94,6 +95,7 @@ export async function getBrowserInstance(forceAuth: boolean) {
   const browser = await chromium.launch({
     args: ['--disable-dev-shm-usage'],
     headless: true,
+    // acceptDownloads: true,
   })
 
   if (!forceAuth) {
@@ -102,9 +104,9 @@ export async function getBrowserInstance(forceAuth: boolean) {
         encoding: 'utf8',
       })
       const storageState = JSON.parse(storageData)
-      if (DEBUG) {
-        console.log('debug: session storage found: ', storageState)
-      }
+      // if (DEBUG) {
+      //   console.log('debug: session storage found: ', storageState)
+      // }
       context = await browser.newContext({
         storageState,
       })
@@ -138,6 +140,42 @@ export async function getBrowserInstance(forceAuth: boolean) {
   return { browser, context, page, forceAuth }
 }
 
+export async function downloadFitFile(context: BrowserContext, id: number) {
+  // const url = `https://connect.garmin.com/modern/activity/9790320910`
+  // const url = `https://connect.garmin.com/modern/activity/${id}`
+  // console.log('id: ', id)
+  const url = `https://connect.garmin.com/modern/proxy/download-service/files/activity/${id}`
+  const filename = `./${id}.fit.zip`
+  const filename2 = `./${id}.fit`
+
+  console.log('downloading fit from: ', url)
+
+  const response = await context.request.get(url)
+  const body = await response.body()
+  console.log('response body: ', body)
+  await writeFile(filename, body)
+
+  // const contents = await readFile(filename)
+
+  // const fileContents = createReadStream(filename)
+  // const writeStream = createWriteStream(filename2)
+  // const unzip = createUnzip()
+
+  // fileContents.pipe(unzip).pipe(writeStream)
+
+  const zip = new StreamZip.async({ file: filename })
+  await zip.extract(null, './')
+  await zip.close()
+
+  // unzip(contents, async (err, buffer) => {
+  //   if (err) {
+  //     console.error('unzip error:', err)
+  //     process.exitCode = 1
+  //   }
+  //   await writeFile(filename2, buffer)
+  // })
+}
+
 export async function fetchData(year: string, month: string, config: fetchDataConfig) {
   return new Promise<GarminDataItem[]>(async (resolve, reject) => {
     month = `${parseInt(month) - 1}`
@@ -164,15 +202,15 @@ export async function fetchData(year: string, month: string, config: fetchDataCo
         }
         const body = await response.body()
         const bodyString = body.toString()
-        if (DEBUG) {
-          console.log('debug: raw data: ', bodyString)
-        }
+        // if (DEBUG) {
+        //   console.log('debug: raw data: ', bodyString)
+        // }
 
         const content = await JSON.parse(bodyString)
         process.stdout.write(` Done.\n`)
-        if (DEBUG) {
-          console.log('debug: resolving with: ', content.calendarItems)
-        }
+        // if (DEBUG) {
+        //   console.log('debug: resolving with: ', content.calendarItems)
+        // }
         return resolve(content.calendarItems)
       })
       .catch((error) => {
@@ -197,6 +235,9 @@ export async function getExistingData(outputFile: string) {
   return { existingActivitiesCount, existingActivities }
 }
 
+/**
+ * Order activities by timestamp and adds 'timestamp' attribute.
+ */
 export function processActivities(activities: (GarminDataItem | EnrichedGarminDataItem)[]) {
   const sortedActivities: EnrichedGarminDataItem[] = []
 
