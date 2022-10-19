@@ -15,13 +15,14 @@ specifiers:
   eslint: 8.25.0
   eslint-config-prettier: 8.5.0
   eslint-plugin-security: 1.5.0
+  node-stream-zip: ^1.15.0
   path: 0.12.7
   playwright-chromium: 1.26.1
+  playwright-firefox: ^1.27.1
   rambda: 7.3.0
   rollup: 3.2.3
   tsx: 3.10.3
   typescript: 4.8.4
-  vite: 3.1.8
   vitest: 0.24.3
 
 dependencies:
@@ -29,6 +30,7 @@ dependencies:
   commander: 9.4.1
   dayjs: 1.11.5
   dotenv: 16.0.3
+  node-stream-zip: 1.15.0
   path: 0.12.7
   playwright-chromium: 1.26.1
   rambda: 7.3.0
@@ -44,10 +46,10 @@ devDependencies:
   eslint: 8.25.0
   eslint-config-prettier: 8.5.0_eslint@8.25.0
   eslint-plugin-security: 1.5.0
+  playwright-firefox: 1.27.1
   rollup: 3.2.3
   tsx: 3.10.3
   typescript: 4.8.4
-  vite: 3.1.8
   vitest: 0.24.3
 
 packages:
@@ -1183,6 +1185,11 @@ packages:
     resolution: {integrity: sha512-OWND8ei3VtNC9h7V60qff3SVobHr996CTwgxubgyQYEpg290h9J0buyECNNJexkFm5sOajh5G116RYA1c8ZMSw==}
     dev: true
 
+  /node-stream-zip/1.15.0:
+    resolution: {integrity: sha512-LN4fydt9TqhZhThkZIVQnF9cwjU3qmUH9h78Mx/K7d3VvfRqqwthLwJEUOEL0QPZ0XQmNN7be5Ggit5+4dq3Bw==}
+    engines: {node: '>=0.12.0'}
+    dev: false
+
   /once/1.4.0:
     resolution: {integrity: sha512-lNaJgI+2Q5URQBkccEKHTQOPaXdUxnZZElQTZY0MFUAuaEqe1E+Nyvgdz/aIyNi6Z9MzO5dv1H8n58/GELp3+w==}
     dependencies:
@@ -1279,6 +1286,21 @@ packages:
     resolution: {integrity: sha512-hzFchhhxnEiPc4qVPs9q2ZR+5eKNifY2hQDHtg1HnTTUuphYCBP8ZRb2si+B1TR7BHirgXaPi48LIye5SgrLAA==}
     engines: {node: '>=14'}
     hasBin: true
+
+  /playwright-core/1.27.1:
+    resolution: {integrity: sha512-9EmeXDncC2Pmp/z+teoVYlvmPWUC6ejSSYZUln7YaP89Z6lpAaiaAnqroUt/BoLo8tn7WYShcfaCh+xofZa44Q==}
+    engines: {node: '>=14'}
+    hasBin: true
+    dev: true
+
+  /playwright-firefox/1.27.1:
+    resolution: {integrity: sha512-AkPARIZQNSfEKyPHrYMjy45kOv59tXcRNdRldsrN/FmgIjd76irY1e1GD0wjPCwqqItDmOpX8UhORSM9ty7hDA==}
+    engines: {node: '>=14'}
+    hasBin: true
+    requiresBuild: true
+    dependencies:
+      playwright-core: 1.27.1
+    dev: true
 
   /postcss/8.4.18:
     resolution: {integrity: sha512-Wi8mWhncLJm11GATDaQKobXSNEYGUHeQLiQqDFG1qQ5UTDPTEvKw0Xt5NsTpktGTwLps3ByrWsBrG0rB8YQ9oA==}

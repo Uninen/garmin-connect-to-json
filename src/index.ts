@@ -4,7 +4,13 @@ import dotenv from 'dotenv'
 import { writeFile } from 'node:fs/promises'
 import { version } from '../package.json'
 import { DEBUG } from './config'
-import { fetchData, getBrowserInstance, getExistingData, processActivities } from './functions'
+import {
+  downloadFitFile,
+  fetchData,
+  getBrowserInstance,
+  getExistingData,
+  processActivities,
+} from './functions'
 
 import type { GarminCommandOptions } from './types'
 
@@ -56,6 +62,10 @@ const forceAuth = !!progOptions.authenticate
       context,
       page,
     })
+    if (newActivities.length > 0) {
+      await downloadFitFile(context, 9790320910)
+      // await downloadFitFile(page, newActivities[4].id)
+    }
     await browser.close()
 
     if (newActivities.length > 0) {

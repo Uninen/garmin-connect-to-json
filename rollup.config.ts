@@ -13,6 +13,7 @@ export default {
     'dayjs',
     'dotenv',
     'node:fs/promises',
+    'node:zlib',
     'playwright-chromium',
     'rambda',
     'dayjs/plugin/timezone',
