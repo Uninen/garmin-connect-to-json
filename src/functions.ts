@@ -1,16 +1,19 @@
 import dayjs from 'dayjs'
 import { readFile, writeFile } from 'fs/promises'
 import type { BrowserContext } from 'playwright-chromium'
-import { chromium } from 'playwright-chromium'
+import { chromium } from 'playwright-extra'
 import { reverse, sortBy, uniqWith } from 'rambda'
 import {
   DEBUG,
-  GARMIN_APP_VERSION,
   LOGIN_DELAY_MS,
   SESSION_STORAGE_PATH,
   USER_AGENT,
+  GARMIN_APP_VERSION,
 } from './config'
 import { EnrichedGarminDataItem, fetchDataConfig, GarminDataItem } from './types'
+import StealthPlugin from 'puppeteer-extra-plugin-stealth'
+
+chromium.use(StealthPlugin())
 
 import timezone from 'dayjs/plugin/timezone'
 import utc from 'dayjs/plugin/utc'
@@ -46,7 +49,9 @@ export async function getBrowserInstance(forceAuth: boolean) {
       })
       console.log(`✓ Using existing browser session.`)
     } catch (err) {
-      console.log(`✓ Existing browser session not found.`)
+      console.log(
+        `✓ Existing browser session not found. Trying to save one in ${SESSION_STORAGE_PATH}`
+      )
       forceAuth = true
     }
   }
@@ -58,11 +63,32 @@ export async function getBrowserInstance(forceAuth: boolean) {
     })
   }
 
+  // context.addCookies([
+  //   {
+  //     name: '_gid',
+  //     value: 'X',
+  //     domain: 'connect.garmin.com',
+  //     path: '/',
+  //   },
+  //   {
+  //     name: 'SESSIONID',
+  //     value: 'X',
+  //     domain: 'connect.garmin.com',
+  //     path: '/',
+  //   },
+  // ])
+
   const page = await context.newPage()
   page.setExtraHTTPHeaders({
     'X-app-ver': GARMIN_APP_VERSION,
     'NK': 'NT',
+    'content-type': 'application/json',
+    'DNT': '1',
+    'origin': 'https://connect.garmin.com',
     'accept-language': 'en-GB,en-US;q=0.9,en;q=0.8',
+    'accept': 'application/json, text/plain, */*',
+    // 'DI-Backend': 'connectapi.garmin.com',
+    // 'TE': 'trailers',
   })
 
   return { browser, context, page }
@@ -72,55 +98,65 @@ export async function fetchData(year: string, month: string, config: fetchDataCo
   return new Promise<GarminDataItem[]>(async (resolve, reject) => {
     month = `${parseInt(month) - 1}`
 
-    const url = `https://connect.garmin.com/modern/proxy/calendar-service/year/${year}/month/${month}`
-    if (DEBUG) {
+    const url = `https://connect.garmin.com/calendar-service/year/${year}/month/${month}`
+    https: if (DEBUG) {
       console.log('debug: fetchData URL: ', url)
     }
 
     if (config.forceAuth) {
       try {
-        await config.page.goto('https://connect.garmin.com/signin')
-        await config.page.waitForSelector('iframe')
+        await config.page.goto('https://connect.garmin.com')
+        await config.page.getByText('Sign In').click()
+        // await config.page.goto('https://connect.garmin.com/signin')
+        await config.page.waitForSelector('form.signin__form')
         await sleep(LOGIN_DELAY_MS)
 
-        try {
-          await config.page.waitForSelector('#truste-consent-button')
-          await config.page.click('#truste-consent-button')
-          console.log('#truste-consent-button clicked')
-        } catch {
-          console.log('#truste-consent-button never came')
-        }
+        // try {
+        //   await config.page.waitForSelector('#truste-consent-button', { timeout: 1500 })
+        //   await config.page.click('#truste-consent-button')
+        //   console.log('#truste-consent-button clicked')
+        // } catch {
+        //   console.log('#truste-consent-button never came')
+        // }
 
         if (DEBUG) {
           await sleep(LOGIN_DELAY_MS)
           await config.page.screenshot({
-            path: '/Users/uninen/Code/Libraries/garminconnect/debug-00-unfilled-login.png',
+            path: '/Users/uninen/Code/Projects/garmin-connect-to-json/debug-00-unfilled-login.png',
             fullPage: true,
           })
         }
 
-        await config.page.frames()[1].check('#login-remember-checkbox')
-        await config.page
-          .frames()[1]
-          .fill('input[name="username"]', process.env.GARMIN_CONNECT_USERNAME!)
-        await config.page
-          .frames()[1]
-          .fill('input[name="password"]', process.env.GARMIN_CONNECT_PASSWORD!)
+        await config.page.fill('input[name="email"]', process.env.GARMIN_CONNECT_USERNAME!)
+        await config.page.waitForTimeout(500)
+        await config.page.fill('input[name="password"]', process.env.GARMIN_CONNECT_PASSWORD!)
+        await config.page.waitForTimeout(500)
+        await config.page.getByText('Remember Me').check()
+        await config.page.waitForTimeout(500)
 
         if (DEBUG) {
           await sleep(LOGIN_DELAY_MS)
           await config.page.screenshot({
-            path: '/Users/uninen/Code/Libraries/garminconnect/debug-01-filled-login.png',
+            path: '/Users/uninen/Code/Projects/garmin-connect-to-json/debug-01-filled-login.png',
             fullPage: true,
           })
         }
 
-        await config.page.frames()[1].click('#login-btn-signin')
-        await config.page.waitForSelector('.user-profile')
+        await config.page.locator('button[type="submit"]').click()
         await sleep(LOGIN_DELAY_MS * 2)
         if (DEBUG) {
           await config.page.screenshot({
-            path: '/Users/uninen/Code/Libraries/garminconnect/debug-02-after-login.png',
+            path: '/Users/uninen/Code/Projects/garmin-connect-to-json/debug-02-after-login.png',
+            fullPage: true,
+          })
+        }
+
+        // await config.page.locator('button[type="submit"]').click()
+        // await sleep(LOGIN_DELAY_MS * 2)
+        await config.page.waitForSelector('.main-nav')
+        if (DEBUG) {
+          await config.page.screenshot({
+            path: '/Users/uninen/Code/Projects/garmin-connect-to-json/debug-03-after-login.png',
             fullPage: true,
           })
         }
@@ -146,7 +182,7 @@ export async function fetchData(year: string, month: string, config: fetchDataCo
     await sleep(LOGIN_DELAY_MS * 2)
     if (DEBUG) {
       await config.page.screenshot({
-        path: '/Users/uninen/Code/Libraries/garminconnect/debug-03-calendar-home.png',
+        path: '/Users/uninen/Code/Projects/garmin-connect-to-json/debug-04-calendar-home.png',
         fullPage: true,
       })
     }
